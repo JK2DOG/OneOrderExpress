@@ -3,6 +3,7 @@ package com.zc.express.view.activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +12,10 @@ import android.view.MenuItem;
 
 import com.zc.express.ExpressAplication;
 import com.zc.express.ExpressComponent;
+import com.zc.express.R;
 import com.zc.express.view.widget.EmptyLayout;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -26,9 +29,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 把 EmptyLayout 放在基类统一处理，@Nullable 表明 View 可以为 null，详细可看 ButterKnife
      */
-//    @Nullable
-//    @BindView(R.id.empty_layout)
-//    protected EmptyLayout mEmptyLayout;
+    @Nullable
+    @BindView(R.id.empty_layout)
+    protected EmptyLayout mEmptyLayout;
 
     private ProgressDialog mProgress;
     private Unbinder unbinder;

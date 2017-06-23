@@ -10,6 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.zc.express.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
