@@ -34,6 +34,16 @@ public class User {
     private boolean phone_activated;
     private int id;
 
+
+    public User() {
+    }
+
+    public User(String user_name, String password) {
+        this.user_name = user_name;
+        this.password = password;
+    }
+
+
     public String getUser_name() {
         return user_name;
     }

@@ -3,6 +3,8 @@ package com.zc.express.view.activity.login;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -12,18 +14,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.zc.express.R;
+import com.zc.express.bean.Auth;
+import com.zc.express.bean.User;
+import com.zc.express.data.preference.ObjectPreference;
+import com.zc.express.model.UserModel;
 import com.zc.express.utils.SimpleTextWatcher;
 import com.zc.express.utils.ToastUtils;
+import com.zc.express.view.activity.home.MainActivity;
 import com.zc.express.view.activity.BaseActivity;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -55,6 +66,10 @@ public class LoginActivity extends BaseActivity {
     private int keyHeight = 0; //软件盘弹起后所占高度
     private float scale = 0.6f; //logo缩放比例
 
+    Subscription mLoginSubscription;
+    @Inject
+    UserModel mUserModel;
+
     @Override
     protected int attachLayoutRes() {
         return R.layout.activity_login;
@@ -62,17 +77,17 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initInjector() {
-
+        DaggerLoginComponent.builder().expressComponent(getAppComponent()).build().inject(this);
     }
 
     @Override
     protected void initViews() {
-        if(isFullScreen(this)){
+        if (isFullScreen(this)) {
             AndroidBug5497Workaround.assistActivity(this);
         }
         screenHeight = this.getResources().getDisplayMetrics().heightPixels; //获取屏幕高度
         keyHeight = screenHeight / 3;//弹起高度为屏幕高度的1/3
-        mMobileEt.addTextChangedListener(new SimpleTextWatcher(){
+        mMobileEt.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!TextUtils.isEmpty(s) && mCleanMobileIv.getVisibility() == View.GONE) {
@@ -82,7 +97,7 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });
-        mPasswordEt.addTextChangedListener(new SimpleTextWatcher(){
+        mPasswordEt.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!TextUtils.isEmpty(s) && mCleanPasswordIv.getVisibility() == View.GONE) {
@@ -115,9 +130,9 @@ public class LoginActivity extends BaseActivity {
               /* old是改变前的左上右下坐标点值，没有old的是改变后的左上右下坐标点值
               现在认为只要控件将Activity向上推的高度超过了1/3屏幕高，就认为软键盘弹起*/
                 if (oldBottom != 0 && bottom != 0 && (oldBottom - bottom > keyHeight)) {
-                    Log.e("wenzhihao", "up------>"+(oldBottom - bottom));
+                    Log.e("wenzhihao", "up------>" + (oldBottom - bottom));
                     int dist = mContentView.getBottom() - bottom;
-                    if (dist>0){
+                    if (dist > 0) {
                         ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", 0.0f, -dist);
                         mAnimatorTranslateY.setDuration(300);
                         mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
@@ -127,8 +142,8 @@ public class LoginActivity extends BaseActivity {
                     mServiceView.setVisibility(View.INVISIBLE);
 
                 } else if (oldBottom != 0 && bottom != 0 && (bottom - oldBottom > keyHeight)) {
-                    Log.e("wenzhihao", "down------>"+(bottom - oldBottom));
-                    if ((mContentView.getBottom() - oldBottom)>0){
+                    Log.e("wenzhihao", "down------>" + (bottom - oldBottom));
+                    if ((mContentView.getBottom() - oldBottom) > 0) {
                         ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", mContentView.getTranslationY(), 0);
                         mAnimatorTranslateY.setDuration(300);
                         mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
@@ -143,11 +158,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-
-
-
-
-    @OnClick({R.id.iv_clean_phone,R.id.clean_password,R.id.iv_show_pwd})
+    @OnClick({R.id.iv_clean_phone, R.id.clean_password, R.id.iv_show_pwd, R.id.btn_login})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_clean_phone:
@@ -168,13 +179,61 @@ public class LoginActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(pwd))
                     mPasswordEt.setSelection(pwd.length());
                 break;
+            case R.id.btn_login://登录
+                onRootLayoutClick(v);
+                login();
+                break;
         }
     }
 
 
+    /**
+     * 登录
+     */
+    private void login() {
+        final String username = mMobileEt.getText().toString();
+        if (username.isEmpty()) {
+            mMobileEt.setError(getString(R.string.user_name_hint));
+            return;
+        }
+
+        final String password = mPasswordEt.getText().toString();
+        if (password.isEmpty()) {
+            mPasswordEt.setError(getString(R.string.password_hint));
+            return;
+        }
+
+        mLoginSubscription =mUserModel.login(new User(username,password)).subscribe(new Action1<User>() {
+            @Override
+            public void call(User user) {
+                if (null != user)
+                    mUserModel.saveUser(user);
+                ObjectPreference.saveObject(LoginActivity.this, new Auth(username, password));
+
+                Context context = LoginActivity.this;
+                context.startActivity(new Intent(context, MainActivity.class));
+                finish();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                ToastUtils.showToast("登录失败！");
+            }
+        });
+    }
+
+
+    @OnClick(R.id.root)
+    public void onRootLayoutClick(View view) {
+        InputMethodManager imm = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
 
     /**
      * 缩小
+     *
      * @param view
      */
     public void zoomIn(final View view, float dist) {
@@ -193,6 +252,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * f放大
+     *
      * @param view
      */
     public void zoomOut(final View view) {
@@ -209,6 +269,7 @@ public class LoginActivity extends BaseActivity {
         mAnimatorSet.setDuration(300);
         mAnimatorSet.start();
     }
+
     public boolean isFullScreen(Activity activity) {
         return (activity.getWindow().getAttributes().flags &
                 WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN;
