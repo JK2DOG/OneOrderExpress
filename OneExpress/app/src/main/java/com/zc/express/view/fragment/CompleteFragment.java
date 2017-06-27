@@ -51,32 +51,32 @@ public class CompleteFragment extends BaseFragment {
 
     @Override
     public void initData() {
-        RetrofitHelper.builder().getLatestNews()
-                .compose(bindToLifecycle())
-                .map(this::changeReadState)
-                .delay(1000, TimeUnit.MILLISECONDS)
-                .compose(Rxutils.normalSchedulers())
-                .subscribe(dailyListBean -> {
-
-                    LogUtil.all(dailyListBean.getStories().get(0).getTitle());
-                    //mAdapter.updateData(dailyListBean.getStories());
-                    currentTime = dailyListBean.getDate();
-                    if (dailyListBean.getStories().size() < 8) {
-                        loadMoreDaily(DailyFragment.this.currentTime);
-                    }
-
-                    top_stories = dailyListBean.getTop_stories();
-                    stories.addAll(dailyListBean.getStories());
-                    finishTask();
-                }, throwable -> {
-
-                    LogUtil.all("加载失败" + throwable.getMessage());
-                });
+//        RetrofitHelper.builder().getLatestNews()
+//                .compose(bindToLifecycle())
+//                .map(this::changeReadState)
+//                .delay(1000, TimeUnit.MILLISECONDS)
+//                .compose(Rxutils.normalSchedulers())
+//                .subscribe(dailyListBean -> {
+//
+//                    LogUtil.all(dailyListBean.getStories().get(0).getTitle());
+//                    //mAdapter.updateData(dailyListBean.getStories());
+//                    currentTime = dailyListBean.getDate();
+//                    if (dailyListBean.getStories().size() < 8) {
+//                        loadMoreDaily(DailyFragment.this.currentTime);
+//                    }
+//
+//                    top_stories = dailyListBean.getTop_stories();
+//                    stories.addAll(dailyListBean.getStories());
+//                    finishTask();
+//                }, throwable -> {
+//
+//                    LogUtil.all("加载失败" + throwable.getMessage());
+//                });
     }
 
 
     private void initRecyclerView() {
-        mAdapter = new DailyListAdapter(getActivity(), stories);
+//        mAdapter = new DailyListAdapter(getActivity(), stories);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -85,7 +85,7 @@ public class CompleteFragment extends BaseFragment {
             @Override
             public void onLoadMore(int currentPage) {
 
-                loadMoreDaily(currentTime);
+//                loadMoreDaily(currentTime);
             }
 
 
@@ -124,32 +124,32 @@ public class CompleteFragment extends BaseFragment {
 
         mSwipeRefreshLayout.setRefreshing(false);
 
-        Observable.from(top_stories)
-                .forEach(topDailys -> banners.add(new BannerEntity(topDailys.getId(),
-                        topDailys.getTitle(), topDailys.getImage())));
-
-        mBannerView.delayTime(5).build(banners);
-        mRecyclerView.setAdapter(mHeaderViewRecyclerAdapter);
-        mAdapter.notifyDataSetChanged();
+//        Observable.from(top_stories)
+//                .forEach(topDailys -> banners.add(new BannerEntity(topDailys.getId(),
+//                        topDailys.getTitle(), topDailys.getImage())));
+//
+//        mBannerView.delayTime(5).build(banners);
+//        mRecyclerView.setAdapter(mHeaderViewRecyclerAdapter);
+//        mAdapter.notifyDataSetChanged();
     }
 
 
     private void loadMoreDaily(final String currentTime) {
-
-        RetrofitHelper.builder().getBeforeNews(currentTime)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(this::changeReadState)
-                .subscribe(dailyListBean -> {
-
-                    mAutoLoadOnScrollListener.setLoading(false);
-                    mAdapter.addData(dailyListBean.getStories());
-                    DailyFragment.this.currentTime = dailyListBean.getDate();
-                }, throwable -> {
-
-                    mAutoLoadOnScrollListener.setLoading(false);
-                    LogUtil.all("加载更多数据失败");
-                });
+//
+//        RetrofitHelper.builder().getBeforeNews(currentTime)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .map(this::changeReadState)
+//                .subscribe(dailyListBean -> {
+//
+//                    mAutoLoadOnScrollListener.setLoading(false);
+//                    mAdapter.addData(dailyListBean.getStories());
+//                    DailyFragment.this.currentTime = dailyListBean.getDate();
+//                }, throwable -> {
+//
+//                    mAutoLoadOnScrollListener.setLoading(false);
+//                    LogUtil.all("加载更多数据失败");
+//                });
     }
 
 }

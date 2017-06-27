@@ -15,7 +15,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.zc.express.ExpressAplication;
-import com.zc.express.ExpressComponent;
 import com.zc.express.R;
 import com.zc.express.view.widget.EmptyLayout;
 
@@ -111,15 +110,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * 获取 ExpressComponent
-     *
-     * @return ExpressComponent
-     */
-    protected ExpressComponent getAppComponent() {
-        return ExpressAplication.getExpressComponent();
-//        return ((AndroidApplication) getApplication()).getAppComponent();
-    }
+//    /**
+//     * 获取 ExpressComponent
+//     *
+//     * @return ExpressComponent
+//     */
+//    protected ExpressComponent getAppComponent() {
+//        return ExpressAplication.getExpressComponent();
+////        return ((AndroidApplication) getApplication()).getAppComponent();
+//    }
 
 
     /**

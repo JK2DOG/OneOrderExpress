@@ -12,25 +12,16 @@ import com.zc.express.utils.ToastUtils;
 
 public class ExpressAplication extends Application {
 
-    private static ExpressComponent mExpressComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        ExpressModule.init(this);
         OkHttp.createCache(getCacheDir());
         ExpressApiProvider.init(OkHttp.client(this));
-        _initInjector();
         ToastUtils.init(this);
     }
 
-    private void _initInjector() {
-        mExpressComponent = DaggerExpressComponent.builder()
-                .expressModule(new ExpressModule(this))
-                .build();
-    }
 
 
-    public static ExpressComponent getExpressComponent() {
-        return mExpressComponent;
-    }
 }

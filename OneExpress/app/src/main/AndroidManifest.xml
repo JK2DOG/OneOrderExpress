@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zc.express">
 
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".ExpressAplication"
         android:allowBackup="true"
@@ -11,16 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
         <activity android:name=".view.activity.home.MainActivity">
+
+        </activity>
+        <activity
+            android:name=".view.activity.login.LoginActivity"
+            android:label="登录"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.activity.login.LoginActivity"
-            android:label="登录"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.user.UserInfoActivity"
             android:screenOrientation="portrait" />

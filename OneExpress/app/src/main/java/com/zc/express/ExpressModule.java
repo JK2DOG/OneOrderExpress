@@ -23,28 +23,32 @@ import okhttp3.OkHttpClient;
 @Module
 public class ExpressModule {
 
-    private Context mAppContext;
-    private Picasso mPicasso;
+    static private Context mAppContext;
+    static private Picasso mPicasso;
 
-    public ExpressModule(Context context) {
+    static public void init(Context context) {
         mAppContext = context;
     }
 
+//    public ExpressModule(Context context) {
+//        mAppContext = context;
+//    }
+
     @Provides
-    @Singleton
-    public Context getAppContext() {
+    static public Context getAppContext() {
         return mAppContext;
     }
 
+
     @Singleton
     @Provides
-    public OkHttpClient getOkHttpClient() {
+    static public OkHttpClient getOkHttpClient() {
         return OkHttp.client(mAppContext);
     }
 
     @Singleton
     @Provides
-    public Picasso getPicasso() {
+    static synchronized public Picasso getPicasso() {
         if (null == mPicasso)
             mPicasso = PicassoProvider.builder(getAppContext(), getOkHttpClient()).build();
 
@@ -53,13 +57,13 @@ public class ExpressModule {
 
     @Singleton
     @Provides
-    public ExpressApi getDoctorApi() {
+    static public ExpressApi getDoctorApi() {
         return ExpressApiProvider.api();
     }
 
     @Singleton
     @Provides
-    public User getUser() {
+    static public User getUser() {
         User user = ObjectProvider.sharedInstance().get(User.class);
         if (null == user) {
             user = ObjectPreference.getObject(getAppContext(), User.class);

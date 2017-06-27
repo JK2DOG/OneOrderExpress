@@ -19,22 +19,31 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
+import com.zc.express.ExpressModule;
 import com.zc.express.R;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.User;
 import com.zc.express.data.preference.ObjectPreference;
 import com.zc.express.model.UserModel;
+import com.zc.express.utils.JsonUtils;
 import com.zc.express.utils.SimpleTextWatcher;
 import com.zc.express.utils.ToastUtils;
-import com.zc.express.view.activity.home.MainActivity;
 import com.zc.express.view.activity.BaseActivity;
+import com.zc.express.view.activity.home.MainActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import rx.Subscriber;
 import rx.Subscription;
-import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -77,7 +86,16 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initInjector() {
-        DaggerLoginComponent.builder().expressComponent(getAppComponent()).build().inject(this);
+        DaggerLoginComponent.create().inject(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mUserModel.isLogin()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 
     @Override
@@ -191,33 +209,55 @@ public class LoginActivity extends BaseActivity {
      * 登录
      */
     private void login() {
-        final String username = mMobileEt.getText().toString();
+        final String username = mMobileEt.getText().toString().trim();
         if (username.isEmpty()) {
             mMobileEt.setError(getString(R.string.user_name_hint));
             return;
         }
 
-        final String password = mPasswordEt.getText().toString();
+        final String password = mPasswordEt.getText().toString().trim();
         if (password.isEmpty()) {
             mPasswordEt.setError(getString(R.string.password_hint));
             return;
         }
 
-        mLoginSubscription =mUserModel.login(new User(username,password)).subscribe(new Action1<User>() {
+        mLoginSubscription = mUserModel.login(new User(username, password)).subscribe(new Subscriber<ResponseBody>() {
             @Override
-            public void call(User user) {
-                if (null != user)
-                    mUserModel.saveUser(user);
-                ObjectPreference.saveObject(LoginActivity.this, new Auth(username, password));
+            public void onCompleted() {
 
-                Context context = LoginActivity.this;
-                context.startActivity(new Intent(context, MainActivity.class));
-                finish();
             }
-        }, new Action1<Throwable>() {
+
             @Override
-            public void call(Throwable throwable) {
+            public void onError(Throwable e) {
+                Log.e("zc", "Throwable:" + e.getMessage());
                 ToastUtils.showToast("登录失败！");
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                try {
+                    String data = responseBody.string();
+                    JSONObject jsonObject = new JSONObject(data);
+                    int code = jsonObject.optInt("code");
+                    if (code != 0) {
+                        User mUser = JsonUtils.convertEntity(data, User.class);
+                        if (null != mUser){
+                            mUserModel.saveUser(mUser);
+                            ObjectPreference.saveObject(LoginActivity.this, new Auth(username, password));
+                            Context context = LoginActivity.this;
+                            context.startActivity(new Intent(context, MainActivity.class));
+                            finish();
+                        }
+                    }else {
+
+                    }
+
+                    Log.e("retrofit", responseBody.string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

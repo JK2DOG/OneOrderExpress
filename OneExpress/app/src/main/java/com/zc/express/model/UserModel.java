@@ -12,6 +12,7 @@ import com.zc.express.data.preference.ObjectPreference;
 import javax.inject.Inject;
 
 import dagger.Module;
+import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -35,7 +36,7 @@ public class UserModel {
     /**
      * 登录
      */
-    public Observable<User> login(User user) {
+    public Observable<ResponseBody> login(User user) {
         return mExpressApi.login(user).observeOn(AndroidSchedulers.mainThread());
 
     }
@@ -45,7 +46,7 @@ public class UserModel {
      * @param context
      * @return
      */
-    public Observable<User> checkLogin(Context context){
+    public Observable<ResponseBody> checkLogin(Context context){
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth){
             return Observable.error(new UserReadableException(""));
