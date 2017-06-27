@@ -1,12 +1,17 @@
 package com.zc.express.data.network;
 
 import android.content.Context;
+import android.util.Base64;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * OkHttp 单例
@@ -16,13 +21,25 @@ public class OkHttp {
     static private final int DEFAULT_CACHE_SIZE = 8 * 1024 * 1024;
     private static OkHttpClient mInstance;
     private static Cache mCache;
+    private static String name=new String(Base64.encode("tonga".getBytes(),Base64.DEFAULT));
+    private static String pwd=new String(Base64.encode("easyeship".getBytes(),Base64.DEFAULT));
 
     public static OkHttpClient client(Context appContext) {
         if (null == mInstance) {
             synchronized (OkHttp.class) {
                 if (null == mInstance) {
 //                    mInstance = getDefaultBuilder().sslSocketFactory(SslContextFactory.getSslSocket(appContext)).build();
-                    mInstance = getDefaultBuilder().build();
+                    mInstance = getDefaultBuilder().addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request request = chain.request()
+                                    .newBuilder()
+                                    .addHeader("username", name)
+                                    .addHeader("password", pwd)
+                                    .build();
+                            return chain.proceed(request);
+                        }
+                    }).build();
                 }
             }
         }
