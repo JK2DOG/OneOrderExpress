@@ -23,9 +23,11 @@ public class OkHttp {
     static private final int DEFAULT_CACHE_SIZE = 8 * 1024 * 1024;
     private static OkHttpClient mInstance;
     private static Cache mCache;
-    private static String name = new String(Base64.encode("tonga".getBytes(), Base64.DEFAULT));
-    private static String pwd = new String(Base64.encode("easyeship".getBytes(), Base64.DEFAULT));
+    private static String name = Base64.encodeToString("blang01 ".getBytes(), Base64.DEFAULT).trim();
+    private static String pwd = Base64.encodeToString("123456".getBytes(), Base64.DEFAULT).trim();
 
+    //app端你试试blang01
+//123456
     public static OkHttpClient client(Context appContext) {
         if (null == mInstance) {
             synchronized (OkHttp.class) {
@@ -36,8 +38,7 @@ public class OkHttp {
                         public Response intercept(Chain chain) throws IOException {
                             Request request = chain.request()
                                     .newBuilder()
-//                                    .addHeader("username", name)
-//                                    .addHeader("password", pwd)
+//                                    .addHeader("Authorization", "YmxhbmcwMToxMjM0NTY=")
                                     .addHeader("Content-Type", "application/json")
                                     .addHeader("Accept", "application/json")
                                     .build();

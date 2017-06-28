@@ -19,6 +19,8 @@
     <color name="line_bg">#e6e6e6</color>
     <color name="color_read">#9E9E9E</color>
     <color name="font_normal">#555555</color>
+    <color name="iblue">#4C45D6</color>
 
+    <color name="item_background">#FAFAFA</color>
 
 </resources>

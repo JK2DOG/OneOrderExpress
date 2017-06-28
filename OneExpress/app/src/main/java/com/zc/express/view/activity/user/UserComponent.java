@@ -13,6 +13,5 @@ import dagger.Component;
 @Component(modules = ExpressModule.class)
 public interface UserComponent {
     void inject(UserInfoActivity activity);
-
     void inject(EditUserInfoActivity activity);
 }

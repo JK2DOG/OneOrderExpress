@@ -7,4 +7,6 @@
     <string name="please_input_limit_pwd">请输入数字或字母</string>
     <string name="user_name_hint">请输入注册手机号</string>
     <string name="password_hint">请输入密码</string>
+    <string name="logout_tip_title">退出登录</string>
+    <string name="logout_tip_content">确定退出该账号吗？</string>
 </resources>

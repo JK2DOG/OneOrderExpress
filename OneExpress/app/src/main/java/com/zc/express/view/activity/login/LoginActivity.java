@@ -43,6 +43,7 @@ import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -221,37 +222,28 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        mLoginSubscription = mUserModel.login(new User(username, password)).subscribe(new Subscriber<ResponseBody>() {
+        mLoginSubscription = mUserModel.login(new User(username, password)).subscribe(new Action1<ResponseBody>() {
             @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e("zc", "Throwable:" + e.getMessage());
-                ToastUtils.showToast("登录失败！");
-            }
-
-            @Override
-            public void onNext(ResponseBody responseBody) {
+            public void call(ResponseBody responseBody) {
+                Log.e("zc", "ResponseBody" );
                 try {
                     String data = responseBody.string();
                     JSONObject jsonObject = new JSONObject(data);
                     int code = jsonObject.optInt("code");
-                    if (code != 0) {
+                    if (code == 0) {//请求成功
                         User mUser = JsonUtils.convertEntity(data, User.class);
-                        if (null != mUser){
+                        if (null != mUser) {
                             mUserModel.saveUser(mUser);
                             ObjectPreference.saveObject(LoginActivity.this, new Auth(username, password));
                             Context context = LoginActivity.this;
                             context.startActivity(new Intent(context, MainActivity.class));
                             finish();
                         }
-                    }else {
-
+                    } else {//请求失败
+                        String errorMsg = jsonObject.optString("message");
+                        Log.e("zc", "ErrorMsg:" + errorMsg);
+                        ToastUtils.showToast("登录失败！"+errorMsg);
                     }
-
                     Log.e("retrofit", responseBody.string());
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -259,7 +251,20 @@ public class LoginActivity extends BaseActivity {
                     e.printStackTrace();
                 }
             }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable e) {
+                Log.e("zc", "Throwable:" + e.getMessage());
+                ToastUtils.showToast("登录失败！"+e.getMessage());
+            }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != mLoginSubscription)
+            mLoginSubscription.unsubscribe();
     }
 
 

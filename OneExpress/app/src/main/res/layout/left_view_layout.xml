@@ -23,7 +23,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher"
+                android:src="@mipmap/head_kuaidi_green"
                 app:roundHeight="25dp"
                 app:roundWidth="25dp" />
 

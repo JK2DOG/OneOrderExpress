@@ -1,10 +1,12 @@
 package com.zc.express.model;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.zc.express.api.ExpressApi;
 import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
+import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.User;
 import com.zc.express.data.memory.ObjectProvider;
 import com.zc.express.data.preference.ObjectPreference;
@@ -52,6 +54,16 @@ public class UserModel {
             return Observable.error(new UserReadableException(""));
         }
         return login(new User(auth.getUsername(), auth.getPassword()));
+    }
+
+
+    public  Observable<ResponseBody> queryOrder(Context context){
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth){
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng=auth.getUsername()+":"+auth.getPassword();
+        return  mExpressApi.queryOrder(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),new QueryOrder(getUser().getId(),null,null));
     }
 
     /**

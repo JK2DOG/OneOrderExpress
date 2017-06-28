@@ -14,11 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
         <activity android:name=".view.activity.home.MainActivity">
-
         </activity>
         <activity
             android:name=".view.activity.login.LoginActivity"
-            android:label="登录"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

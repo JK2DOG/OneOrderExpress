@@ -1,11 +1,15 @@
 package com.zc.express.api;
 
+import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.User;
+
+import org.json.JSONObject;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -28,6 +32,10 @@ public interface ExpressApi {
     @POST("user")
     Observable<ResponseBody> update(@Body User user);//更新用户信息can only be used to update password phone, realname, and company
 
+
+
+    @POST("/order/user/orders")
+    Observable<ResponseBody> queryOrder(@Header("Authorization")String auth ,@Body QueryOrder queryOrder);
     /**
      * 文件内容，参数名file
      *

@@ -33,7 +33,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-
+        initInjector();
         initViews();
         initData();
         super.onActivityCreated(savedInstanceState);
@@ -51,6 +51,11 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroy();
         unbinder.unbind();
     }
+
+    /**
+     * Dagger 注入
+     */
+    protected abstract void initInjector();
 
     public abstract int getLayoutId();
 
