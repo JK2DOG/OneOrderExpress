@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zc.express.R;
@@ -15,6 +14,7 @@ import com.zc.express.bean.Order;
 
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -49,50 +49,25 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
         if (order == null) {
             return;
         }
-            setDailyDate(holder, storiesBean);
+        setDailyDate(holder, order);
     }
 
 
     /**
      * 设置数据给普通内容Item
      */
-    private void setDailyDate(final ItemContentViewHolder holder, final DailyInfo.StoriesBean storiesBean) {
+    private void setDailyDate(final ItemContentViewHolder holder, final Order order) {
+//        2017-06-23T04:21:49.000+0000
+        holder.mOrderId.setText(order.getId());
+        holder.mOrderStatus.setText(order.getStatus().equals("created")?"创建成功":"666");
+        String time = order.getCreate_time();
+        String times[] = time.split("T");
+        holder.mOrderCreateTime.setText(times[0]);
+        holder.tv_eship_service_name.setText(order.getEship_service_name());
+        holder.tv_commodity_item_name.setText(order.getCommodity_item_name());
+        holder.tv_where_to.setText(order.getDeparture()+" - "+order.getDestination());
+        holder.tv_final_price.setText("¥ "+order.getFinal_price());
 
-        holder.mTitle.setText(storiesBean.getTitle());
-        List<String> images = storiesBean.getImages();
-        if (images != null && images.size() > 0) {
-            Glide.with(mContext)
-                    .load(images.get(0))
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.account_avatar)
-                    .into(holder.mPic);
-        }
-        boolean multipic = storiesBean.isMultipic();
-        if (multipic) {
-
-            holder.mMorePic.setVisibility(View.VISIBLE);
-        } else {
-            holder.mMorePic.setVisibility(View.GONE);
-        }
-        if (!storiesBean.isRead()) {
-            holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.color_unread));
-        } else {
-            holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.color_read));
-        }
-        holder.mLayout.setOnClickListener(v -> {
-
-            if (!storiesBean.isRead()) {
-                storiesBean.setRead(true);
-                holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.color_read));
-                new Thread(() -> {
-
-                    //mDailyDao.insertReadNew(storiesBean.getId() + "");
-                }).start();
-            }
-            //跳转到详情界面
-            DailyDetailsActivity.lanuch(mContext, storiesBean.getId());
-        });
     }
 
 
@@ -103,8 +78,8 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     // }
 
 
-    public void addData(List<DailyInfo.StoriesBean> stories) {
-        this.stories.addAll(stories);
+    public void addData(List<Order> orders) {
+        this.orders.addAll(orders);
         notifyDataSetChanged();
         //
         // if (this.stories == null) {
@@ -131,17 +106,26 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
 
     class ItemContentViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.card_view)
+        @BindView(R.id.card_view)
         CardView mLayout;
 
-        @Bind(R.id.item_image)
-        ImageView mPic;
+        @BindView(R.id.tv_id)
+        TextView mOrderId;
 
-        @Bind(R.id.item_title)
-        TextView mTitle;
+        @BindView(R.id.tv_status)
+        TextView mOrderStatus;
 
-        @Bind(R.id.item_more_pic)
-        ImageView mMorePic;
+        @BindView(R.id.tv_createtime)
+        TextView mOrderCreateTime;
+
+        @BindView(R.id.tv_eship_service_name)
+        TextView tv_eship_service_name;
+        @BindView(R.id.tv_commodity_item_name)
+        TextView tv_commodity_item_name;
+        @BindView(R.id.tv_where_to)
+        TextView tv_where_to;
+        @BindView(R.id.tv_final_price)
+        TextView tv_final_price;
 
 
         ItemContentViewHolder(View itemView) {

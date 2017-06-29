@@ -20,7 +20,8 @@
     <color name="color_read">#9E9E9E</color>
     <color name="font_normal">#555555</color>
     <color name="iblue">#4C45D6</color>
-
+    <color name="black_alpha_45">#71000000</color>
     <color name="item_background">#FAFAFA</color>
+    <color name="gray_light">#dcdcdc</color>
 
 </resources>

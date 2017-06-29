@@ -43,6 +43,18 @@ public class UserModel {
 
     }
 
+
+    /**
+     * 更新用户信息
+     * can only be used to update password phone, realname, and company
+     */
+    public Observable<ResponseBody> update(User user) {
+        return mExpressApi.update(user).observeOn(AndroidSchedulers.mainThread());
+
+    }
+
+
+
     /**
      * 检查登录状态，用于更新user信息
      * @param context

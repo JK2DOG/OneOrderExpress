@@ -40,6 +40,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
@@ -104,7 +105,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onNext(ResponseBody responseBody) {
-                Log.e("zc", "ResponseBody");
+                Log.e("zc0", "ResponseBody");
                 try {
                     String data = responseBody.string();
                     JSONObject jsonObject = new JSONObject(data);
@@ -136,6 +137,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        JPushInterface.init(getApplicationContext());
 //        setStatusBar();
         initDragLayout();
 

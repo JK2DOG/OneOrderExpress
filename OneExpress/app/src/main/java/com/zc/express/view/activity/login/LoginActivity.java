@@ -40,6 +40,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 import rx.Subscription;
@@ -210,6 +211,7 @@ public class LoginActivity extends BaseActivity {
      * 登录
      */
     private void login() {
+        final String rid = JPushInterface.getRegistrationID(getApplicationContext());//todo:极光
         final String username = mMobileEt.getText().toString().trim();
         if (username.isEmpty()) {
             mMobileEt.setError(getString(R.string.user_name_hint));

@@ -35,10 +35,10 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center"
                         android:layout_height="60dp"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
 
                         <TextView
@@ -46,21 +46,21 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="20dp"
-                            android:text="昵称"
+                            android:text="实名"
                             android:textColor="@color/gary_30"
                             android:textSize="18sp" />
 
                         <EditText
-                            android:id="@+id/tv_name"
+                            android:id="@+id/et_name"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:gravity="right|center"
-                            android:padding="10dp"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="20dp"
+                            android:layout_weight="1"
                             android:background="@null"
+                            android:gravity="right|center"
+                            android:padding="10dp"
                             android:textColor="@color/gary_30"
                             android:textSize="16sp"
                             tools:text="大锤" />
@@ -70,14 +70,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginLeft="60dp"
-                        android:background="@color/line_bg" />
+                        android:background="@color/line_bg"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
+                        android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:visibility="gone">
 
 
                         <TextView
@@ -93,13 +95,13 @@
                         <TextView
                             android:id="@+id/tv_id"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:gravity="right|center"
-                            android:padding="10dp"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:gravity="right|center"
+                            android:padding="10dp"
                             android:textColor="@color/gary_30"
                             android:textSize="16sp"
                             tools:text="1475487414@qq.com" />
@@ -114,9 +116,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
+                        android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:orientation="horizontal">
 
 
                         <TextView
@@ -129,27 +131,34 @@
                             android:textColor="@color/gary_30"
                             android:textSize="18sp" />
 
-                        <TextView
-                            android:id="@+id/tv_imei"
+                        <EditText
+                            android:id="@+id/et_phone"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:gravity="right|center"
-                            android:padding="10dp"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:gravity="right|center"
+                            android:padding="10dp"
                             android:textColor="@color/gary_30"
                             android:textSize="16sp"
                             tools:text="1234567894561236" />
                     </LinearLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="60dp"
+                        android:background="@color/line_bg" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:orientation="horizontal"
+                        android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:orientation="horizontal">
 
 
                         <TextView
@@ -162,16 +171,17 @@
                             android:textColor="@color/gary_30"
                             android:textSize="18sp" />
 
-                        <TextView
-                            android:id="@+id/tv_company"
+                        <EditText
+                            android:id="@+id/et_company"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:gravity="right|center"
-                            android:padding="10dp"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:gravity="right|center"
+                            android:padding="10dp"
                             android:textColor="@color/gary_30"
                             android:textSize="16sp"
                             tools:text="大锤公司" />

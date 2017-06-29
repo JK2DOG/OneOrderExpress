@@ -1,9 +1,11 @@
 package com.zc.express.view.activity.user;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -28,6 +30,11 @@ public class UserInfoActivity extends BaseActivity {
 
     @BindView(R.id.title_top)
     TextView mTitleTv;//标题
+
+
+    @BindView(R.id.tv_realname)
+    TextView mRealTime;//实名
+
 
     @BindView(R.id.tv_name)
     TextView mNameTv;//昵称
@@ -63,12 +70,18 @@ public class UserInfoActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mTitleTv.setText("个人中心");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         mNameTv.setText(mUser.getUser_name());
+        mRealTime.setText(mUser.getReal_name());
         mEmailTv.setText(mUser.getEmail());
         mPhoneTv.setText(mUser.getPhone());
         mCompanyTv.setText(mUser.getCompany());
     }
-
 
     @OnClick(R.id.tv_exit)
     void onExit() {
@@ -96,6 +109,13 @@ public class UserInfoActivity extends BaseActivity {
 
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -104,6 +124,9 @@ public class UserInfoActivity extends BaseActivity {
                 } else {
                     finish();
                 }
+                break;
+            case  R.id.item_edit:
+                startActivity(new Intent(this,EditUserInfoActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

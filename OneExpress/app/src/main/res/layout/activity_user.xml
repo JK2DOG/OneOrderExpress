@@ -64,11 +64,11 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="25dp"
-                        android:visibility="gone"
                         android:layout_marginLeft="20dp"
                         android:layout_toRightOf="@+id/iv_head"
                         android:textColor="@color/color_read"
                         android:textSize="14sp"
+                        android:visibility="gone"
                         tools:text="12345612345" />
 
                 </RelativeLayout>
@@ -86,6 +86,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="?android:attr/selectableItemBackground">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="20dp"
+                            android:text="实名"
+                            android:textColor="@color/gary_30"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tv_realname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="20dp"
+                            android:textColor="@color/gary_30"
+                            android:textSize="16sp"
+                            tools:text="撒地方" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="60dp"
+                        android:background="@color/line_bg" />
 
                     <RelativeLayout
                         android:id="@+id/layout_id"
@@ -150,11 +184,13 @@
                             android:textSize="16sp"
                             tools:text="1234567894561236" />
                     </RelativeLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginLeft="60dp"
                         android:background="@color/line_bg" />
+
                     <RelativeLayout
                         android:id="@+id/layout_company"
                         android:layout_width="match_parent"
