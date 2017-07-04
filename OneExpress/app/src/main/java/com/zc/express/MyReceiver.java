@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.zc.interlocution.ui.activity.MainActivity;
+
+import com.zc.express.view.activity.home.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

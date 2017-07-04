@@ -1,8 +1,12 @@
 package com.zc.express.view.activity.home;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,10 +16,12 @@ import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.google.gson.reflect.TypeToken;
 import com.joanzapata.android.BaseAdapterHelper;
 import com.joanzapata.android.QuickAdapter;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
+import com.zc.express.LocalBroadcastManager;
 import com.zc.express.R;
 import com.zc.express.bean.ItemBean;
 import com.zc.express.bean.User;
@@ -34,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -61,6 +68,8 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
 
+    public static boolean isForeground = false;
+
     private QuickAdapter<ItemBean> quickAdapter;
 
     private int currentTabIndex;
@@ -83,6 +92,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
+        isForeground = true;
         super.onResume();
         // 未登录则重新登录
         if (!mUserModel.isLogin()) {
@@ -138,6 +148,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initViews() {
         JPushInterface.init(getApplicationContext());
+        registerMessageReceiver();  // used for receive msg
 //        setStatusBar();
         initDragLayout();
 
@@ -251,11 +262,62 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-
+    @Override
+    protected void onPause() {
+        isForeground = false;
+        super.onPause();
+    }
     @Override
     protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
         mSubscriptionCollection.cancelAll();
+    }
+
+
+    //for receive customer msg from jpush server
+    private MessageReceiver mMessageReceiver;
+    public static final String MESSAGE_RECEIVED_ACTION = "com.zc.express.MESSAGE_RECEIVED_ACTION";
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_EXTRAS = "extras";
+
+    public void registerMessageReceiver() {
+        mMessageReceiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+        filter.addAction(MESSAGE_RECEIVED_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+    }
+
+    public class MessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+
+                    if (MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
+                        String messge = intent.getStringExtra(KEY_MESSAGE);
+                        String extras = intent.getStringExtra(KEY_EXTRAS);
+                        StringBuilder showMsg = new StringBuilder();
+                        showMsg.append(KEY_MESSAGE + " : " + messge + "\n");
+                        if (!TextUtils.isEmpty(extras)) {
+                            showMsg.append(KEY_EXTRAS + " : " + extras + "\n");
+                            JSONObject json = new JSONObject(extras);
+                            Iterator<String> it = json.keys();
+                            while (it.hasNext()) {
+                                String myKey = it.next().toString();
+                                if (myKey.equals("txt")) {
+
+                                }
+                            }
+                        }
+                    }
+
+
+            } catch (Exception e) {
+            }
+        }
     }
 
 }
