@@ -77,7 +77,7 @@ public class CompleteFragment extends BaseFragment {
 
     @Override
     public void initData() {
-        mUserModel.queryOrder(getContext()).subscribe(new Action1<ResponseBody>() {
+        mUserModel.getSuccessOrder(getContext()).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
                 try {
@@ -102,19 +102,26 @@ public class CompleteFragment extends BaseFragment {
                         }
                     } else {//请求失败
                         JSONObject jsonObject = new JSONObject(data);
-                        String errorMsg = jsonObject.optString("message");
+                         final String errorMsg = jsonObject.optString("message");
                         Log.e("zc", "ErrorMsg:" + errorMsg);
-                        ToastUtils.showToast("获取订单列表失败！" + errorMsg);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showToast("获取订单列表失败！" + errorMsg);
+                            }
+                        });
+
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     e.printStackTrace();
                 }
             }
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable e) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 Log.e("zc", "Throwable:" + e.getMessage());
             }
         });

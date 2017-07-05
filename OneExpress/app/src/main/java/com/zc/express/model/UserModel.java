@@ -75,7 +75,26 @@ public class UserModel {
             return Observable.error(new UserReadableException(""));
         }
         String authStrng=auth.getUsername()+":"+auth.getPassword();
-        return  mExpressApi.queryOrder(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),new QueryOrder(getUser().getId(),null,null));
+        return  mExpressApi.queryOrder(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),new QueryOrder(getUser().getId(),null,null)).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResponseBody> getWaitOrder(Context context) {
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.getWaitOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    public Observable<ResponseBody> getSuccessOrder(Context context) {
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.getSuccessOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),getUser().getId() + "","1970-01-01","2017-07-05").observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
