@@ -77,6 +77,23 @@ public class CompleteFragment extends BaseFragment {
 
     @Override
     public void initData() {
+//        mUserModel.setPushId(getContext()).subscribe(new Action1<ResponseBody>() {
+//            @Override
+//            public void call(ResponseBody responseBody) {
+//                String data = null;
+//                try {
+//                    data = responseBody.string();
+//                    Log.e("zc1", "ResponseBody:" + data);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Action1<Throwable>() {
+//            @Override
+//            public void call(Throwable e) {
+//                Log.e("zc", "Throwable:" + e.getMessage());
+//            }
+//        });
         mUserModel.getSuccessOrder(getContext()).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {

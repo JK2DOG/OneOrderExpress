@@ -7,6 +7,7 @@ import com.zc.express.api.ExpressApi;
 import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.QueryOrder;
+import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 import com.zc.express.data.memory.ObjectProvider;
 import com.zc.express.data.preference.ObjectPreference;
@@ -67,6 +68,15 @@ public class UserModel {
         }
         return login(new User(auth.getUsername(), auth.getPassword()));
     }
+    public  Observable<ResponseBody> setPushId(Context context){
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth){
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng=auth.getUsername()+":"+auth.getPassword();
+        return  mExpressApi.setPushId(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),getUser().getId()+"",new SetPushId("000")).observeOn(AndroidSchedulers.mainThread());
+    }
+
 
 
     public  Observable<ResponseBody> queryOrder(Context context){

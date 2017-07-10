@@ -1,6 +1,7 @@
 package com.zc.express.api;
 
 import com.zc.express.bean.QueryOrder;
+import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 
 import okhttp3.MultipartBody;
@@ -40,6 +41,9 @@ public interface ExpressApi {
 
     @GET("order/picker/summary")
     Observable<ResponseBody> getSuccessOrder(@Header("Authorization") String auth, @Query("pickerid") String uid, @Query("start") String stime, @Query("end") String etime);//查询已完成订单
+
+    @POST("lbs/shipper/device/{shipper_id}")
+    Observable<ResponseBody> setPushId(@Header("Authorization") String auth,@Path("shipper_id") String uid, @Body SetPushId mPushSet);
 
     /**
      * 文件内容，参数名file
