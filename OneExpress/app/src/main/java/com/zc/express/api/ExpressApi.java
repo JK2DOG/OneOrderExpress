@@ -37,7 +37,7 @@ public interface ExpressApi {
     Observable<ResponseBody> queryOrder(@Header("Authorization") String auth, @Body QueryOrder queryOrder);
 
     @GET("lbs/pendingOrders/{pickerId}")
-    Observable<Response<ResponseBody>> getWaitOrder(@Header("Authorization") String auth, @Path("pickerId") String uid);
+    Observable<ResponseBody> getWaitOrder(@Header("Authorization") String auth, @Path("pickerId") String uid);
 
     @GET("order/picker/summary")
     Observable<ResponseBody> getSuccessOrder(@Header("Authorization") String auth, @Query("pickerid") String uid, @Query("start") String stime, @Query("end") String etime);//查询已完成订单
