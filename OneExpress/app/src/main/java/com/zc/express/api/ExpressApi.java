@@ -5,6 +5,7 @@ import com.zc.express.bean.User;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -36,7 +37,7 @@ public interface ExpressApi {
     Observable<ResponseBody> queryOrder(@Header("Authorization") String auth, @Body QueryOrder queryOrder);
 
     @GET("lbs/pendingOrders/{pickerId}")
-    Observable<ResponseBody> getWaitOrder(@Header("Authorization") String auth, @Path("pickerId") String uid);
+    Observable<Response<ResponseBody>> getWaitOrder(@Header("Authorization") String auth, @Path("pickerId") String uid);
 
     @GET("order/picker/summary")
     Observable<ResponseBody> getSuccessOrder(@Header("Authorization") String auth, @Query("pickerid") String uid, @Query("start") String stime, @Query("end") String etime);//查询已完成订单

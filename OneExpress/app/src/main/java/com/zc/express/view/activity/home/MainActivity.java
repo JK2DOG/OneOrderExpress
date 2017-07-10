@@ -25,12 +25,14 @@ import com.zc.express.LocalBroadcastManager;
 import com.zc.express.R;
 import com.zc.express.bean.ItemBean;
 import com.zc.express.bean.User;
+import com.zc.express.model.LocationMgr;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
 import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.activity.BaseActivity;
 import com.zc.express.view.activity.login.LoginActivity;
+import com.zc.express.view.activity.user.AboutActivity;
 import com.zc.express.view.activity.user.UserInfoActivity;
 import com.zc.express.view.fragment.CompleteFragment;
 import com.zc.express.view.widget.DragLayout;
@@ -143,7 +145,21 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }));
+        LocationMgr.getMyLocation(this, mOnLocationListener);
     }
+
+
+    private LocationMgr.onLocationListener mOnLocationListener = new LocationMgr.onLocationListener() {
+        @Override
+        public void onLocationChanged(int code, double lat1, double long1, String location) {
+            if (0 == code) {
+                Log.e("ZC--------------",location);
+            } else {
+                Log.e("ZC00000000000000","失败");
+            }
+        }
+    };
+
 
     @Override
     protected void initViews() {
@@ -166,6 +182,9 @@ public class MainActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         startActivity(new Intent(MainActivity.this, UserInfoActivity.class));
+                        break;
+                    case 2:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         break;
                 }
 //                Toast.makeText(MainActivity.this, "Click Item " + position, Toast.LENGTH_SHORT).show();
