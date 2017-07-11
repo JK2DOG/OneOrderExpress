@@ -19,13 +19,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
-import com.zc.express.ExpressModule;
 import com.zc.express.R;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.User;
 import com.zc.express.data.preference.ObjectPreference;
+import com.zc.express.model.LocationMgr;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
+import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.SimpleTextWatcher;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.activity.BaseActivity;
@@ -41,11 +42,10 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -77,9 +77,14 @@ public class LoginActivity extends BaseActivity {
     private int keyHeight = 0; //软件盘弹起后所占高度
     private float scale = 0.6f; //logo缩放比例
 
-    Subscription mLoginSubscription;
+    private double mLat=0;
+    private double mLnt=0;
+
     @Inject
     UserModel mUserModel;
+
+    @Inject
+    RxSubscriptionCollection mSubscriptionCollection;
 
     @Override
     protected int attachLayoutRes() {
@@ -98,6 +103,7 @@ public class LoginActivity extends BaseActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+        LocationMgr.getMyLocation(LoginActivity.this, mOnLocationListener);
     }
 
     @Override
@@ -211,7 +217,7 @@ public class LoginActivity extends BaseActivity {
      * 登录
      */
     private void login() {
-        final String rid = JPushInterface.getRegistrationID(getApplicationContext());//todo:极光
+//        final String rid = JPushInterface.getRegistrationID(getApplicationContext());//todo:极光
         final String username = mMobileEt.getText().toString().trim();
         if (username.isEmpty()) {
             mMobileEt.setError(getString(R.string.user_name_hint));
@@ -223,11 +229,10 @@ public class LoginActivity extends BaseActivity {
             mPasswordEt.setError(getString(R.string.password_hint));
             return;
         }
-
-        mLoginSubscription = mUserModel.login(new User(username, password)).subscribe(new Action1<ResponseBody>() {
+        mSubscriptionCollection.add(mUserModel.login(new User(username, password)).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
-                Log.e("zc", "ResponseBody" );
+                Log.e("zc", "ResponseBody");
                 try {
                     String data = responseBody.string();
                     JSONObject jsonObject = new JSONObject(data);
@@ -241,10 +246,12 @@ public class LoginActivity extends BaseActivity {
                             context.startActivity(new Intent(context, MainActivity.class));
                             finish();
                         }
+                        setPushId();
+                        setLocation();
                     } else {//请求失败
                         String errorMsg = jsonObject.optString("message");
                         Log.e("zc", "ErrorMsg:" + errorMsg);
-                        ToastUtils.showToast("登录失败！"+errorMsg);
+                        ToastUtils.showToast("登录失败！" + errorMsg);
                     }
                     Log.e("retrofit", responseBody.string());
                 } catch (IOException e) {
@@ -257,16 +264,60 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void call(Throwable e) {
                 Log.e("zc", "Throwable:" + e.getMessage());
-                ToastUtils.showToast("登录失败！"+e.getMessage());
+                ToastUtils.showToast("登录失败！" + e.getMessage());
             }
-        });
+        }));
+
+
+    }
+
+    private void setLocation() {
+        mSubscriptionCollection.add(   mUserModel.setLocation(LoginActivity.this,mLat,mLnt).subscribe(new Action1<Response>() {
+            @Override
+            public void call(Response response) {
+                if (response.code() == 200) {
+                    try {
+                        Log.e("retrofit", response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable e) {
+                Log.e("zc", "Throwable:" + e.getMessage());
+            }
+        }));
+    }
+
+    private void setPushId() {
+        String rid = JPushInterface.getRegistrationID(getApplicationContext());
+        mSubscriptionCollection.add( mUserModel.setPushId(LoginActivity.this, rid).subscribe(new Action1<Response>() {
+            @Override
+            public void call(Response response) {
+                if (response.code() == 200) {
+                    ToastUtils.showToast("PUSH_ID设置成功！");
+                    try {
+                        Log.e("retrofit", response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable e) {
+                ToastUtils.showToast("PUSH_ID设置失败！" + e.getMessage());
+                Log.e("zc", "Throwable:" + e.getMessage());
+            }
+        }));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mLoginSubscription)
-            mLoginSubscription.unsubscribe();
+        mSubscriptionCollection.cancelAll();
     }
 
 
@@ -276,6 +327,22 @@ public class LoginActivity extends BaseActivity {
                 getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
+
+
+    private LocationMgr.onLocationListener mOnLocationListener = new LocationMgr.onLocationListener() {
+        @Override
+        public void onLocationChanged(int code, double lat1, double long1, String location) {
+            if (0 == code) {
+                mLat=lat1;
+                mLnt=long1;
+                Log.e("ZC--------------", "lat1:" + lat1 + "long1:" + long1 + "地址:" + location);
+            } else {
+                mLat=0;
+                mLnt=0;
+                Log.e("ZC00000000000000", "失败");
+            }
+        }
+    };
 
 
     /**

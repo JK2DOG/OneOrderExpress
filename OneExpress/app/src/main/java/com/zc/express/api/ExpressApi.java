@@ -1,12 +1,13 @@
 package com.zc.express.api;
 
+import com.zc.express.bean.Location;
 import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 
 import okhttp3.MultipartBody;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -44,7 +45,16 @@ public interface ExpressApi {
     Observable<ResponseBody> getSuccessOrder(@Header("Authorization") String auth, @Query("pickerid") String uid, @Query("start") String stime, @Query("end") String etime);//查询已完成订单
 
     @POST("lbs/shipper/device/{shipper_id}")
-    Observable<ResponseBody> setPushId(@Header("Authorization") String auth,@Path("shipper_id") String uid, @Body SetPushId mPushSet);
+    Observable<Response> setPushId(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body SetPushId mPushSet);
+
+    @POST("lbs/{shipper_id}")
+    Observable<Response> setLocation(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body Location mLocation);
+
+    @GET("order/{id}")
+    Observable<Response> getOrderDetails(@Header("Authorization") String auth, @Path("id") String oid);
+
+
+
 
     /**
      * 文件内容，参数名file

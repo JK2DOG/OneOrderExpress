@@ -8,7 +8,6 @@ import android.util.Log;
 import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
 import com.zc.express.bean.MainOrderList;
-import com.zc.express.bean.Order;
 import com.zc.express.bean.User;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
@@ -32,11 +31,11 @@ import okhttp3.ResponseBody;
 import rx.functions.Action1;
 
 /**
- * 已完成的的订单
- * Created by ZC on 2017/6/26.
+ * 待完成订单
+ * Created by ZC on 2017/7/11.
  */
 
-public class CompleteFragment extends BaseFragment {
+public class WaitFragment extends BaseFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -78,8 +77,24 @@ public class CompleteFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
-        mUserModel.getSuccessOrder(getContext()).subscribe(new Action1<ResponseBody>() {
+//        mUserModel.setPushId(getContext()).subscribe(new Action1<ResponseBody>() {
+//            @Override
+//            public void call(ResponseBody responseBody) {
+//                String data = null;
+//                try {
+//                    data = responseBody.string();
+//                    Log.e("zc1", "ResponseBody:" + data);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Action1<Throwable>() {
+//            @Override
+//            public void call(Throwable e) {
+//                Log.e("zc", "Throwable:" + e.getMessage());
+//            }
+//        });
+        mUserModel.getWaitOrder(getContext()).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -92,16 +107,20 @@ public class CompleteFragment extends BaseFragment {
                         }.getType());
                         if (entity != null && entity.size() > 0) {//有订单数据
                             mOrderLists.addAll(entity);
-                                    mAdapter.notifyDataSetChanged();
+                            mAdapter.notifyDataSetChanged();
                         } else {
                             ToastUtils.showToast("暂无数据！");
                         }
                     } else {//请求失败
                         JSONObject jsonObject = new JSONObject(data);
-                         final String errorMsg = jsonObject.optString("message");
+                        final String errorMsg = jsonObject.optString("message");
                         Log.e("zc", "ErrorMsg:" + errorMsg);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 ToastUtils.showToast("获取订单列表失败！" + errorMsg);
-
+                            }
+                        });
 
                     }
                 } catch (IOException e) {
@@ -160,14 +179,13 @@ public class CompleteFragment extends BaseFragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (mOrderLists!=null){
+                if (mOrderLists != null) {
                     mOrderLists.clear();
                 }
                 initData();
             }
         });
     }
-
 
 
 }

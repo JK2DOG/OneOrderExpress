@@ -13,4 +13,6 @@ import dagger.Component;
 @Component(modules = ExpressModule.class)
 public interface CompleteComponent {
     void inject(CompleteFragment completeFragment);
+    void inject(WaitFragment completeFragment);
+
 }

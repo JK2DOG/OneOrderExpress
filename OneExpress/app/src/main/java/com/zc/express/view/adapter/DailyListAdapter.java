@@ -1,7 +1,6 @@
 package com.zc.express.view.adapter;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zc.express.R;
-import com.zc.express.bean.Order;
+import com.zc.express.bean.MainOrderList;
 
 import java.util.List;
 
@@ -23,12 +22,12 @@ import butterknife.ButterKnife;
 public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.ItemContentViewHolder> {
 
 
-    private List<Order> orders;
+    private List<MainOrderList> orders;
 
     private Context mContext;
 
 
-    public DailyListAdapter(Context context, List<Order> orders) {
+    public DailyListAdapter(Context context, List<MainOrderList> orders) {
 
         this.orders = orders;
         this.mContext = context;
@@ -45,7 +44,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
 
     @Override
     public void onBindViewHolder(ItemContentViewHolder holder, int position) {
-        Order order = orders.get(position);
+        MainOrderList order = orders.get(position);
         if (order == null) {
             return;
         }
@@ -56,17 +55,18 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     /**
      * 设置数据给普通内容Item
      */
-    private void setDailyDate(final ItemContentViewHolder holder, final Order order) {
+    private void setDailyDate(final ItemContentViewHolder holder, final MainOrderList order) {
 //        2017-06-23T04:21:49.000+0000
-        holder.mOrderId.setText(order.getId());
-        holder.mOrderStatus.setText(order.getStatus().equals("created")?"创建成功":"666");
-        String time = order.getCreate_time();
+        holder.mOrderId.setText(order.getOrder_id());
+        holder.mOrderStatus.setText((order.isAccept_decision() && order.isAccept_result()) ? "已完成" : "666");
+        String time = order.getOrder_date();
         String times[] = time.split("T");
         holder.mOrderCreateTime.setText(times[0]);
-        holder.tv_eship_service_name.setText(order.getEship_service_name());
-        holder.tv_commodity_item_name.setText(order.getCommodity_item_name());
-        holder.tv_where_to.setText(order.getDeparture()+" - "+order.getDestination());
-        holder.tv_final_price.setText("¥ "+order.getFinal_price());
+//        holder.tv_eship_service_name.setText(order.getEship_service_name());
+//        holder.tv_commodity_item_name.setText(order.getCommodity_item_name());
+        holder.tv_commodity_item_name.setText(order.getCurrency());
+//        holder.tv_where_to.setText(order.getDeparture() + " - " + order.getDestination());
+        holder.tv_final_price.setText("¥ " + order.getFinal_price());
 
     }
 
@@ -78,7 +78,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     // }
 
 
-    public void addData(List<Order> orders) {
+    public void addData(List<MainOrderList> orders) {
         this.orders.addAll(orders);
         notifyDataSetChanged();
         //
@@ -98,7 +98,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     }
 
 
-    public List<Order> getmDailyList() {
+    public List<MainOrderList> getmDailyList() {
 
         return orders;
     }

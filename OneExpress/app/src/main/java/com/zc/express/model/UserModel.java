@@ -2,10 +2,12 @@ package com.zc.express.model;
 
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 
 import com.zc.express.api.ExpressApi;
 import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
+import com.zc.express.bean.Location;
 import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
@@ -15,11 +17,10 @@ import com.zc.express.data.preference.ObjectPreference;
 import javax.inject.Inject;
 
 import dagger.Module;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -31,7 +32,7 @@ public class UserModel {
     private ExpressApi mExpressApi;
 
     @Inject
-    public UserModel(Context context, ExpressApi expressApi){
+    public UserModel(Context context, ExpressApi expressApi) {
         mContext = context;
         mExpressApi = expressApi;
     }
@@ -55,39 +56,57 @@ public class UserModel {
     }
 
 
-
     /**
      * 检查登录状态，用于更新user信息
+     *
      * @param context
      * @return
      */
-    public Observable<ResponseBody> checkLogin(Context context){
+    public Observable<ResponseBody> checkLogin(Context context) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
-        if (null == auth){
+        if (null == auth) {
             return Observable.error(new UserReadableException(""));
         }
         return login(new User(auth.getUsername(), auth.getPassword()));
     }
-    public  Observable<ResponseBody> setPushId(Context context){
+
+    //设置PUSH_ID
+    public Observable<Response> setPushId(Context context, String rid) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
-        if (null == auth){
+        if (null == auth) {
             return Observable.error(new UserReadableException(""));
         }
-        String authStrng=auth.getUsername()+":"+auth.getPassword();
-        return  mExpressApi.setPushId(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),getUser().getId()+"",new SetPushId("000")).observeOn(AndroidSchedulers.mainThread());
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.setPushId(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", new SetPushId(rid)).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    //设置坐标
+    public Observable<Response> setLocation(Context context, double lat,double lnt) {
+
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.setLocation(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", new Location(lat,lnt)).observeOn(AndroidSchedulers.mainThread());
     }
 
 
 
-    public  Observable<ResponseBody> queryOrder(Context context){
-        Auth auth = ObjectPreference.getObject(context, Auth.class);
-        if (null == auth){
-            return Observable.error(new UserReadableException(""));
-        }
-        String authStrng=auth.getUsername()+":"+auth.getPassword();
-        return  mExpressApi.queryOrder(Base64.encodeToString(authStrng.getBytes(),Base64.DEFAULT).trim(),new QueryOrder(getUser().getId(),null,null)).observeOn(AndroidSchedulers.mainThread());
-    }
 
+
+
+//
+//    public Observable<ResponseBody> queryOrder(Context context) {
+//        Auth auth = ObjectPreference.getObject(context, Auth.class);
+//        if (null == auth) {
+//            return Observable.error(new UserReadableException(""));
+//        }
+//        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+//        return mExpressApi.queryOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), new QueryOrder(getUser().getId(), null, null)).observeOn(AndroidSchedulers.mainThread());
+//    }
+
+    //待完成的订单
     public Observable<ResponseBody> getWaitOrder(Context context) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
@@ -97,28 +116,45 @@ public class UserModel {
         return mExpressApi.getWaitOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
     }
 
-
+//已完成的订单
     public Observable<ResponseBody> getSuccessOrder(Context context) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));
         }
         String authStrng = auth.getUsername() + ":" + auth.getPassword();
-        return mExpressApi.getSuccessOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),getUser().getId() + "","1970-01-01","2017-07-05").observeOn(AndroidSchedulers.mainThread());
+        return mExpressApi.getSuccessOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", "1970-01-01", "2017-07-05").observeOn(AndroidSchedulers.mainThread());
     }
+
+
+
+    //订单详情
+    public Observable<Response> getOrderDetails(Context context,String oid) {
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.getOrderDetails(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), oid).observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+
+
 
     /**
      * 保存登录状态
+     *
      * @param user
      */
-    public void saveUser(User user){
+    public void saveUser(User user) {
         ObjectProvider.sharedInstance().set(user);
         ObjectPreference.saveObject(mContext, user);
     }
 
-    private User getUser(){
+    private User getUser() {
         User user = ObjectProvider.sharedInstance().get(User.class);
-        if (null == user){
+        if (null == user) {
             user = ObjectPreference.getObject(mContext, User.class);
             if (null != user)
                 ObjectProvider.sharedInstance().set(user);
@@ -128,9 +164,10 @@ public class UserModel {
 
     /**
      * 是否已登录
+     *
      * @return
      */
-    public boolean isLogin(){
+    public boolean isLogin() {
         Auth auth = ObjectPreference.getObject(mContext, Auth.class);
         return null != getUser() && auth != null;
     }
@@ -138,7 +175,7 @@ public class UserModel {
     /**
      * 退出登录
      */
-    public void logout(){
+    public void logout() {
         ObjectProvider.sharedInstance().remove(User.class);
         ObjectPreference.clearObject(mContext, User.class);
     }
@@ -146,9 +183,12 @@ public class UserModel {
     /**
      * 获取验证码
      */
-    public void getVerificationCode(String phone){
+    public void getVerificationCode(String phone) {
 
     }
+
+
+
 
 //    /**
 //     * 注册

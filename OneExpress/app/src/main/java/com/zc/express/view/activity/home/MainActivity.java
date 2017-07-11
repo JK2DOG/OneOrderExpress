@@ -35,6 +35,7 @@ import com.zc.express.view.activity.login.LoginActivity;
 import com.zc.express.view.activity.user.AboutActivity;
 import com.zc.express.view.activity.user.UserInfoActivity;
 import com.zc.express.view.fragment.CompleteFragment;
+import com.zc.express.view.fragment.WaitFragment;
 import com.zc.express.view.widget.DragLayout;
 
 import org.json.JSONException;
@@ -145,20 +146,10 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }));
-        LocationMgr.getMyLocation(this, mOnLocationListener);
     }
 
 
-    private LocationMgr.onLocationListener mOnLocationListener = new LocationMgr.onLocationListener() {
-        @Override
-        public void onLocationChanged(int code, double lat1, double long1, String location) {
-            if (0 == code) {
-                Log.e("ZC--------------",location);
-            } else {
-                Log.e("ZC00000000000000","失败");
-            }
-        }
-    };
+
 
 
     @Override
@@ -191,7 +182,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        fragments.add(new CompleteFragment());
+        fragments.add(new WaitFragment());
         fragments.add(new CompleteFragment());
 
         showFragment(fragments.get(0));

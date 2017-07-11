@@ -78,8 +78,10 @@
                 android:layout_alignParentLeft="true"
                 android:textColor="@color/black_90"
                 android:textSize="13sp"
+                android:text="货币"
                 android:textStyle="bold"
-                tools:text="Fedex-Test" />
+              />
+            <!--tools:text="Fedex-Test"-->
 
             <TextView
                 android:id="@+id/tv_commodity_item_name"
@@ -88,7 +90,9 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/font_normal"
                 android:textSize="13sp"
-                tools:text="普货" />
+               />
+            <!--tools:text="普货"-->
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -100,6 +104,7 @@
                 android:id="@+id/tv_where_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:textColor="@color/color_cccccc"
                 android:textSize="13sp"
                 tools:text="上海市 - United States West"
