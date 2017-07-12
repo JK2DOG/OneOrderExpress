@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_ffffff"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"></include>
+
+
+    <LinearLayout
+        style="@style/item_input_background"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="left|center_vertical"
+            android:text="用户名"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+        <com.zc.express.view.widget.ClearEditText
+            android:id="@+id/et_name"
+            style="@style/item_input_edittext"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="请输入用户名" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/item_input_background"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="left|center_vertical"
+            android:text="邮箱"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+        <com.zc.express.view.widget.ClearEditText
+            android:id="@+id/et_email"
+            style="@style/item_input_edittext"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="请输入邮箱" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/item_input_background"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="left|center_vertical"
+            android:text="密码"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+        <com.zc.express.view.widget.ClearEditText
+            android:id="@+id/et_password"
+            style="@style/item_input_edittext"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="请输入密码"
+            android:inputType="textPassword" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/item_input_background"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="left|center_vertical"
+            android:text="确认密码"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+        <com.zc.express.view.widget.ClearEditText
+            android:id="@+id/et_password2"
+            style="@style/item_input_edittext"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="请确认密码"
+            android:inputType="textPassword" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/bg_btn_login_selected"
+        android:text="@string/register"
+        android:textColor="@color/color_ffffff"
+        android:textSize="18dp" />
+
+</LinearLayout>

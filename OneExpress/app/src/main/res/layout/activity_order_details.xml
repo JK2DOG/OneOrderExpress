@@ -301,6 +301,7 @@
 
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cv_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"

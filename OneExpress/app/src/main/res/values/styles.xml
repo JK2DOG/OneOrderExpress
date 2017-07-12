@@ -34,4 +34,24 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+    <style name="item_input_background">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44.44dp</item>
+        <item name="android:background">@color/color_ffffff</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="item_input_edittext">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@null</item>
+        <item name="android:minHeight">44.44dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black_90</item>
+        <item name="android:textColorHint">@color/color_999999</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

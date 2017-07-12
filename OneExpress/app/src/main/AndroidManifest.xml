@@ -138,7 +138,10 @@
             android:value="ef9f43c7af9b84cb84d34638" /> <!--  </>值来自开发者平台取得的AppKey-->
 
 
-        <activity android:name=".view.activity.home.MainActivity"></activity>
+        <activity
+            android:name=".view.activity.home.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
 
         <activity
@@ -150,6 +153,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".view.activity.login.RegisterActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.user.UserInfoActivity"
             android:screenOrientation="portrait" />

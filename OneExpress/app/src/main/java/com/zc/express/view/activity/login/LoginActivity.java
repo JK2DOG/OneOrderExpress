@@ -42,8 +42,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -102,6 +102,7 @@ public class LoginActivity extends BaseActivity {
         if (mUserModel.isLogin()) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
+            return;
         }
         LocationMgr.getMyLocation(LoginActivity.this, mOnLocationListener);
     }
@@ -177,14 +178,14 @@ public class LoginActivity extends BaseActivity {
                         //键盘收回后，logo恢复原来大小，位置同样回到初始位置
                         zoomOut(mLogoIv);
                     }
-                    mServiceView.setVisibility(View.VISIBLE);
+                    mServiceView.setVisibility(View.INVISIBLE);
                 }
             }
         });
     }
 
 
-    @OnClick({R.id.iv_clean_phone, R.id.clean_password, R.id.iv_show_pwd, R.id.btn_login})
+    @OnClick({R.id.iv_clean_phone, R.id.clean_password, R.id.iv_show_pwd, R.id.btn_login,R.id.regist})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_clean_phone:
@@ -209,6 +210,9 @@ public class LoginActivity extends BaseActivity {
                 onRootLayoutClick(v);
                 login();
                 break;
+            case  R.id.regist:
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                break;
         }
     }
 
@@ -232,7 +236,6 @@ public class LoginActivity extends BaseActivity {
         mSubscriptionCollection.add(mUserModel.login(new User(username, password)).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
-                Log.e("zc", "ResponseBody");
                 try {
                     String data = responseBody.string();
                     JSONObject jsonObject = new JSONObject(data);
@@ -272,15 +275,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void setLocation() {
-        mSubscriptionCollection.add(   mUserModel.setLocation(LoginActivity.this,mLat,mLnt).subscribe(new Action1<Response>() {
+        mSubscriptionCollection.add(mUserModel.setLocation(LoginActivity.this,mLat,mLnt).subscribe(new Action1<Response<ResponseBody>>() {
             @Override
-            public void call(Response response) {
-                if (response.code() == 200) {
-                    try {
-                        Log.e("retrofit", response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            public void call(Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    Log.e("retrofit", response.message());
                 }
             }
         }, new Action1<Throwable>() {
@@ -293,16 +292,12 @@ public class LoginActivity extends BaseActivity {
 
     private void setPushId() {
         String rid = JPushInterface.getRegistrationID(getApplicationContext());
-        mSubscriptionCollection.add( mUserModel.setPushId(LoginActivity.this, rid).subscribe(new Action1<Response>() {
+        mSubscriptionCollection.add( mUserModel.setPushId(LoginActivity.this, rid).subscribe(new Action1<Response<ResponseBody>>() {
             @Override
-            public void call(Response response) {
-                if (response.code() == 200) {
+            public void call(Response<ResponseBody> response) {
+                if (response.isSuccessful()){
                     ToastUtils.showToast("PUSH_ID设置成功！");
-                    try {
-                        Log.e("retrofit", response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        Log.e("retrofit", response.message());
                 }
             }
         }, new Action1<Throwable>() {

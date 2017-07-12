@@ -17,8 +17,8 @@ import com.zc.express.data.preference.ObjectPreference;
 import javax.inject.Inject;
 
 import dagger.Module;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -45,7 +45,13 @@ public class UserModel {
 
     }
 
+    /**
+     * 注册
+     */
+    public Observable<Response<ResponseBody>> register(User user) {
+        return mExpressApi.register(user).observeOn(AndroidSchedulers.mainThread());
 
+    }
     /**
      * 更新用户信息
      * can only be used to update password phone, realname, and company
@@ -71,7 +77,7 @@ public class UserModel {
     }
 
     //设置PUSH_ID
-    public Observable<Response> setPushId(Context context, String rid) {
+    public Observable<Response<ResponseBody>> setPushId(Context context, String rid) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));
@@ -81,7 +87,7 @@ public class UserModel {
     }
 
     //设置坐标
-    public Observable<Response> setLocation(Context context, double lat,double lnt) {
+    public Observable<Response<ResponseBody>> setLocation(Context context, double lat,double lnt) {
 
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
@@ -129,7 +135,7 @@ public class UserModel {
 
 
     //订单详情
-    public Observable<Response> getOrderDetails(Context context,String oid) {
+    public Observable<Response<ResponseBody>> getOrderDetails(Context context, String oid) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));

@@ -3,14 +3,15 @@ package com.zc.express.view.activity.order;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
-import com.zc.express.bean.MainOrderList;
 import com.zc.express.bean.Order;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
@@ -18,12 +19,14 @@ import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.activity.BaseActivity;
 
-import java.util.List;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import okhttp3.Response;
+import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 import rx.functions.Action1;
 
 /**
@@ -62,20 +65,26 @@ public class OrderDetailsActivity extends BaseActivity {
     @BindView(R.id.tv_eship_service_name)
     TextView mServiceNameTv;//快递公司
 
+    @BindView(R.id.cv_confirm)
+    CardView mConfirmCv;//确认收货
+
+
     @Inject
     UserModel mUserModel;
     @Inject
     RxSubscriptionCollection mSubscriptionCollection;
 
     private String oid;
+    private boolean isConfirm;
 
-    public  static void start(Context context,String oid){
+    public static void start(Context context, String oid, boolean isConfirm) {
         Intent intent = new Intent(context, OrderDetailsActivity.class);
-        intent.putExtra("oid",oid);
+        intent.putExtra("oid", oid);
+        intent.putExtra("isConfirm", isConfirm);
         context.startActivity(intent);
     }
 
-//    create_time, destination, departure, stauts, final_price, commodity_item_name, carrier, eship_service_name
+    //    create_time, destination, departure, stauts, final_price, commodity_item_name, carrier, eship_service_name
     @Override
     protected int attachLayoutRes() {
         return R.layout.activity_order_details;
@@ -88,34 +97,42 @@ public class OrderDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        oid=getIntent().getStringExtra("oid");
+        oid = getIntent().getStringExtra("oid");
+        isConfirm = getIntent().getBooleanExtra("isConfirm", false);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mConfirmCv.setVisibility(isConfirm ? View.VISIBLE : View.GONE);
         mTitleTv.setText("订单详情");
         showProgress();
-        mSubscriptionCollection.add(mUserModel.getOrderDetails(OrderDetailsActivity.this,oid).subscribe(new Action1<Response>() {
+        mSubscriptionCollection.add(mUserModel.getOrderDetails(OrderDetailsActivity.this, oid).subscribe(new Action1<Response<ResponseBody>>() {
             @Override
-            public void call(Response response) {
+            public void call(Response<ResponseBody> response) {
                 dissmissProgress();
-                if (response.code()==200){//请求成功
-                    String data=response.body().toString();
-                    Log.e("retrofit",data);
-                    Order entity = JsonUtils.toEntity(data, new TypeToken<List<Order>>() {
+                if (response.isSuccessful()) {
+                    String data = null;
+                    try {
+                        data = response.body().string();
+                        Log.e("retrofit", data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Order entity = JsonUtils.toEntity(data, new TypeToken<Order>() {
                     }.getType());
-                    if (entity!=null){
+                    if (entity != null) {
                         String time = entity.getCreate_time();
                         String times[] = time.split("T");
                         mCreateTimeTv.setText(times[0]);
                         mDpartureTv.setText(entity.getDeparture());
                         mDestinationTv.setText(entity.getDestination());
-                        mStautsTv.setText(entity.getStatus().equals("created")?"创建成功":"666");
+//                        mStautsTv.setText(entity.getStatus().equals("created")?"创建成功":"666");
+                        mStautsTv.setText(entity.getStatus());
                         mPriceTv.setText("¥ " + entity.getFinal_price());
                         mNameTv.setText(entity.getCommodity_item_name());
                         mCarrierTv.setText(entity.getCarrier());
                         mServiceNameTv.setText(entity.getEship_service_name());
                     }
-                }else {
-                    ToastUtils.showToast(response.message());
+                } else {
+                    ToastUtils.showToast("ERROR:"+response.code());
                 }
             }
         }, new Action1<Throwable>() {
@@ -126,6 +143,18 @@ public class OrderDetailsActivity extends BaseActivity {
                 Log.e("zc", "Throwable:" + e.getMessage());
             }
         }));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSubscriptionCollection.cancelAll();
+    }
+
+
+    @OnClick(R.id.cv_confirm)
+    void onClick() {
+
     }
 
 

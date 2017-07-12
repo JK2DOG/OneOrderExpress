@@ -13,4 +13,6 @@ import dagger.Component;
 @Component(modules = ExpressModule.class)
 public interface LoginComponent {
     void inject(LoginActivity object);
+    void inject(RegisterActivity activity);
+
 }

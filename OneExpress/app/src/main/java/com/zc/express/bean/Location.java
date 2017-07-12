@@ -4,7 +4,7 @@ package com.zc.express.bean;
  * Created by ZC on 2017/7/11.
  */
 
-public class Location {
+public class    Location {
 
     /**
      * latitude : 31.919187

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.zc.express.R;
 import com.zc.express.bean.MainOrderList;
+import com.zc.express.bean.WaitOrder;
 import com.zc.express.view.activity.order.OrderDetailsActivity;
 
 import java.util.List;
@@ -18,17 +19,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * 订单列表Adapter
+ * 未完成订单
+ * Created by ZC on 2017/7/12.
  */
-public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.ItemContentViewHolder> {
+
+public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.ItemContentViewHolder> {
 
 
-    private List<MainOrderList> orders;
+    private List<WaitOrder> orders;
 
     private Context mContext;
 
 
-    public DailyListAdapter(Context context, List<MainOrderList> orders) {
+    public WaitOrderAdapter(Context context, List<WaitOrder> orders) {
 
         this.orders = orders;
         this.mContext = context;
@@ -39,13 +42,13 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     public ItemContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         return new ItemContentViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_daily_list, parent, false));
+                .inflate(R.layout.item_order, parent, false));
     }
 
 
     @Override
     public void onBindViewHolder(ItemContentViewHolder holder, int position) {
-        MainOrderList order = orders.get(position);
+        WaitOrder order = orders.get(position);
         if (order == null) {
             return;
         }
@@ -56,25 +59,15 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     /**
      * 设置数据给普通内容Item
      */
-    private void setDailyDate(final ItemContentViewHolder holder, final MainOrderList order) {
+    private void setDailyDate(final ItemContentViewHolder holder, final WaitOrder order) {
 //        2017-06-23T04:21:49.000+0000
-        holder.mOrderId.setText(order.getOrder_id());
-        holder.mOrderStatus.setText((order.isAccept_decision() && order.isAccept_result()) ? "已完成" : "未完成/超时");
-        String time = order.getOrder_date();
-        String times[] = time.split("T");
-        holder.mOrderCreateTime.setText(times[0]);
-//        holder.tv_eship_service_name.setText(order.getEship_service_name());
-//        holder.tv_commodity_item_name.setText(order.getCommodity_item_name());
-        holder.tv_commodity_item_name.setText(order.getCurrency());
-//        holder.tv_where_to.setText(order.getDeparture() + " - " + order.getDestination());
-        holder.tv_final_price.setText("¥ " + order.getFinal_price());
+        holder.mOrderId.setText(order.getOrderId());
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OrderDetailsActivity.start(mContext,order.getOrder_id(),false);
+                OrderDetailsActivity.start(mContext,order.getOrderId(),true);
             }
         });
-
     }
 
 
@@ -85,7 +78,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     // }
 
 
-    public void addData(List<MainOrderList> orders) {
+    public void addData(List<WaitOrder> orders) {
         this.orders.addAll(orders);
         notifyDataSetChanged();
         //
@@ -105,7 +98,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
     }
 
 
-    public List<MainOrderList> getmDailyList() {
+    public List<WaitOrder> getmDailyList() {
 
         return orders;
     }
@@ -118,21 +111,6 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
 
         @BindView(R.id.tv_id)
         TextView mOrderId;
-
-        @BindView(R.id.tv_status)
-        TextView mOrderStatus;
-
-        @BindView(R.id.tv_createtime)
-        TextView mOrderCreateTime;
-
-        @BindView(R.id.tv_eship_service_name)
-        TextView tv_eship_service_name;
-        @BindView(R.id.tv_commodity_item_name)
-        TextView tv_commodity_item_name;
-        @BindView(R.id.tv_where_to)
-        TextView tv_where_to;
-        @BindView(R.id.tv_final_price)
-        TextView tv_final_price;
 
 
         ItemContentViewHolder(View itemView) {

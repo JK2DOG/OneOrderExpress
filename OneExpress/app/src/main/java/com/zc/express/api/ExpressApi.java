@@ -6,13 +6,14 @@ import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 
 import okhttp3.MultipartBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -26,7 +27,8 @@ public interface ExpressApi {
 
     @POST("user/check")
     Observable<ResponseBody> login(@Body User user);//登录
-
+    @PUT("user")
+    Observable<Response<ResponseBody>> register(@Body User user);//注册
 
     @GET("user")
     Observable<ResponseBody> queryUser(@Query("id") int id);//查询用户
@@ -45,13 +47,13 @@ public interface ExpressApi {
     Observable<ResponseBody> getSuccessOrder(@Header("Authorization") String auth, @Query("pickerid") String uid, @Query("start") String stime, @Query("end") String etime);//查询已完成订单
 
     @POST("lbs/shipper/device/{shipper_id}")
-    Observable<Response> setPushId(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body SetPushId mPushSet);
+    Observable<Response<ResponseBody>> setPushId(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body SetPushId mPushSet);
 
     @POST("lbs/{shipper_id}")
-    Observable<Response> setLocation(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body Location mLocation);
+    Observable<Response<ResponseBody>> setLocation(@Header("Authorization") String auth, @Path("shipper_id") String uid, @Body Location mLocation);
 
     @GET("order/{id}")
-    Observable<Response> getOrderDetails(@Header("Authorization") String auth, @Path("id") String oid);
+    Observable<Response<ResponseBody>> getOrderDetails(@Header("Authorization") String auth, @Path("id") String oid);
 
 
 

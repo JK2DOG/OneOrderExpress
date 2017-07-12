@@ -42,7 +42,15 @@ public class User {
         this.user_name = user_name;
         this.password = password;
     }
-
+    public User(String user_name, String password,String email) {
+        this.user_name = user_name;
+        this.password = password;
+        this.email=email;
+        this.vip=true;
+        this.is_business=true;
+        this.phone_verified=true;
+        this.phone_activated=true;
+    }
 
     public String getUser_name() {
         return user_name;

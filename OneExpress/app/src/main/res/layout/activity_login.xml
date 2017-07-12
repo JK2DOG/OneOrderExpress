@@ -159,6 +159,7 @@
 
                 <TextView
                     android:id="@+id/forget_password"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -180,6 +181,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:padding="10dp">
 

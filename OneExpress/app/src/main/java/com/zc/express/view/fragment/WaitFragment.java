@@ -9,11 +9,13 @@ import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
 import com.zc.express.bean.MainOrderList;
 import com.zc.express.bean.User;
+import com.zc.express.bean.WaitOrder;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
 import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.adapter.DailyListAdapter;
+import com.zc.express.view.adapter.WaitOrderAdapter;
 import com.zc.express.view.widget.AutoLoadOnScrollListener;
 
 import org.json.JSONArray;
@@ -56,8 +58,8 @@ public class WaitFragment extends BaseFragment {
     @Inject
     UserModel mUserModel;
 
-    private List<MainOrderList> mOrderLists = new ArrayList<>();
-    private DailyListAdapter mAdapter;
+    private List<WaitOrder> mOrderLists = new ArrayList<>();
+    private WaitOrderAdapter mAdapter;
 
     @Override
     protected void initInjector() {
@@ -103,7 +105,7 @@ public class WaitFragment extends BaseFragment {
                     Log.e("zc1", "ResponseBody:" + data);
                     JSONArray jsonArray = new JSONArray(data);
                     if (jsonArray != null) {
-                        List<MainOrderList> entity = JsonUtils.toEntity(data, new TypeToken<List<MainOrderList>>() {
+                        List<WaitOrder> entity = JsonUtils.toEntity(data, new TypeToken<List<WaitOrder>>() {
                         }.getType());
                         if (entity != null && entity.size() > 0) {//有订单数据
                             mOrderLists.addAll(entity);
@@ -141,7 +143,7 @@ public class WaitFragment extends BaseFragment {
 
 
     private void initRecyclerView() {
-        mAdapter = new DailyListAdapter(getActivity(), mOrderLists);
+        mAdapter = new WaitOrderAdapter(getActivity(), mOrderLists);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
