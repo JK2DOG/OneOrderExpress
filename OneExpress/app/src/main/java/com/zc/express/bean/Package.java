@@ -1,10 +1,13 @@
 package com.zc.express.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by ZC on 2017/6/28.
  */
 
-public class Package {
+public class Package implements Parcelable {
 
     private int id;
     private String order_id;
@@ -160,4 +163,65 @@ public class Package {
     public void setDoc(boolean doc) {
         this.doc = doc;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.order_id);
+        dest.writeString(this.description);
+        dest.writeInt(this.height);
+        dest.writeInt(this.width);
+        dest.writeInt(this.length);
+        dest.writeString(this.dimension_unit);
+        dest.writeDouble(this.weight);
+        dest.writeString(this.weight_unit);
+        dest.writeString(this.custom_number);
+        dest.writeInt(this.value);
+        dest.writeString(this.currency_unit);
+        dest.writeParcelable(this.recipient, flags);
+        dest.writeString(this.status);
+        dest.writeString(this.tracking_num);
+        dest.writeByte(this.active ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.doc ? (byte) 1 : (byte) 0);
+    }
+
+    public Package() {
+    }
+
+    protected Package(Parcel in) {
+        this.id = in.readInt();
+        this.order_id = in.readString();
+        this.description = in.readString();
+        this.height = in.readInt();
+        this.width = in.readInt();
+        this.length = in.readInt();
+        this.dimension_unit = in.readString();
+        this.weight = in.readDouble();
+        this.weight_unit = in.readString();
+        this.custom_number = in.readString();
+        this.value = in.readInt();
+        this.currency_unit = in.readString();
+        this.recipient = in.readParcelable(Person.class.getClassLoader());
+        this.status = in.readString();
+        this.tracking_num = in.readString();
+        this.active = in.readByte() != 0;
+        this.doc = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Package> CREATOR = new Parcelable.Creator<Package>() {
+        @Override
+        public Package createFromParcel(Parcel source) {
+            return new Package(source);
+        }
+
+        @Override
+        public Package[] newArray(int size) {
+            return new Package[size];
+        }
+    };
 }

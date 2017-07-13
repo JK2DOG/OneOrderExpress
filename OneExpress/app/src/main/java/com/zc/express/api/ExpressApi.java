@@ -1,6 +1,7 @@
 package com.zc.express.api;
 
 import com.zc.express.bean.Location;
+import com.zc.express.bean.Order;
 import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
@@ -55,8 +56,8 @@ public interface ExpressApi {
     @GET("order/{id}")
     Observable<Response<ResponseBody>> getOrderDetails(@Header("Authorization") String auth, @Path("id") String oid);
 
-
-
+    @PUT("order/appRecheckOrder")
+    Observable<Response<ResponseBody>> recheckOrder(@Header("Authorization") String auth, @Body Order order);
 
     /**
      * 文件内容，参数名file

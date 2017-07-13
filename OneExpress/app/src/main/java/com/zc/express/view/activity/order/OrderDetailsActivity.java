@@ -18,6 +18,7 @@ import com.zc.express.utils.JsonUtils;
 import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.activity.BaseActivity;
+import com.zc.express.view.widget.EmptyLayout;
 
 import java.io.IOException;
 
@@ -76,6 +77,7 @@ public class OrderDetailsActivity extends BaseActivity {
 
     private String oid;
     private boolean isConfirm;
+    private Order mOrder;
 
     public static void start(Context context, String oid, boolean isConfirm) {
         Intent intent = new Intent(context, OrderDetailsActivity.class);
@@ -103,11 +105,16 @@ public class OrderDetailsActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mConfirmCv.setVisibility(isConfirm ? View.VISIBLE : View.GONE);
         mTitleTv.setText("订单详情");
-        showProgress();
+        showLoading();
+        getData();
+
+    }
+
+    private void getData() {
         mSubscriptionCollection.add(mUserModel.getOrderDetails(OrderDetailsActivity.this, oid).subscribe(new Action1<Response<ResponseBody>>() {
             @Override
             public void call(Response<ResponseBody> response) {
-                dissmissProgress();
+                hideLoading();
                 if (response.isSuccessful()) {
                     String data = null;
                     try {
@@ -119,6 +126,7 @@ public class OrderDetailsActivity extends BaseActivity {
                     Order entity = JsonUtils.toEntity(data, new TypeToken<Order>() {
                     }.getType());
                     if (entity != null) {
+                        mOrder = entity;
                         String time = entity.getCreate_time();
                         String times[] = time.split("T");
                         mCreateTimeTv.setText(times[0]);
@@ -132,13 +140,18 @@ public class OrderDetailsActivity extends BaseActivity {
                         mServiceNameTv.setText(entity.getEship_service_name());
                     }
                 } else {
-                    ToastUtils.showToast("ERROR:"+response.code());
+                    ToastUtils.showToast("ERROR:" + response.code());
                 }
             }
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable e) {
-                dissmissProgress();
+                showNetError(new EmptyLayout.OnRetryListener() {
+                    @Override
+                    public void onRetry() {
+
+                    }
+                });
                 ToastUtils.showToast(e.getMessage());
                 Log.e("zc", "Throwable:" + e.getMessage());
             }
@@ -154,7 +167,9 @@ public class OrderDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.cv_confirm)
     void onClick() {
-
+        if (mOrder != null) {
+            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+        }
     }
 
 

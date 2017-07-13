@@ -1,10 +1,13 @@
 package com.zc.express.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by ZC on 2017/6/28.
  */
 
-public class Person {
+public class Person implements Parcelable {
 
 
     /**
@@ -230,4 +233,75 @@ public class Person {
     public void setCountry_en(String country_en) {
         this.country_en = country_en;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.address_id);
+        dest.writeInt(this.user_id);
+        dest.writeString(this.name);
+        dest.writeString(this.contact_person);
+        dest.writeString(this.street_name_number);
+        dest.writeString(this.apt_suite_number);
+        dest.writeString(this.street_en);
+        dest.writeString(this.apt_en);
+        dest.writeString(this.city_town);
+        dest.writeString(this.state_province);
+        dest.writeString(this.zip_postal_code);
+        dest.writeString(this.country);
+        dest.writeString(this.contact_phone);
+        dest.writeString(this.mobile_phone);
+        dest.writeString(this.email);
+        dest.writeByte(this.is_sender ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.is_active ? (byte) 1 : (byte) 0);
+        dest.writeString(this.create_date);
+        dest.writeString(this.company);
+        dest.writeString(this.city_en);
+        dest.writeString(this.province_en);
+        dest.writeString(this.country_en);
+    }
+
+    public Person() {
+    }
+
+    protected Person(Parcel in) {
+        this.address_id = in.readInt();
+        this.user_id = in.readInt();
+        this.name = in.readString();
+        this.contact_person = in.readString();
+        this.street_name_number = in.readString();
+        this.apt_suite_number = in.readString();
+        this.street_en = in.readString();
+        this.apt_en = in.readString();
+        this.city_town = in.readString();
+        this.state_province = in.readString();
+        this.zip_postal_code = in.readString();
+        this.country = in.readString();
+        this.contact_phone = in.readString();
+        this.mobile_phone = in.readString();
+        this.email = in.readString();
+        this.is_sender = in.readByte() != 0;
+        this.is_active = in.readByte() != 0;
+        this.create_date = in.readString();
+        this.company = in.readString();
+        this.city_en = in.readString();
+        this.province_en = in.readString();
+        this.country_en = in.readString();
+    }
+
+    public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>() {
+        @Override
+        public Person createFromParcel(Parcel source) {
+            return new Person(source);
+        }
+
+        @Override
+        public Person[] newArray(int size) {
+            return new Person[size];
+        }
+    };
 }

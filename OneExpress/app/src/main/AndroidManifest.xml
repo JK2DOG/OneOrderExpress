@@ -170,6 +170,10 @@
         <activity
             android:name=".view.activity.order.OrderDetailsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.activity.order.OrderConfirmActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

@@ -1,12 +1,16 @@
 package com.zc.express.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ZC on 2017/6/28.
  */
 
-public class Order {
+public class Order implements Parcelable {
 
 
     /**
@@ -66,6 +70,10 @@ public class Order {
     private String carrier;
     private boolean active;
     private List<Package> packages;
+
+    public Order(String oid) {
+        this.id = oid;
+    }
 
     public String getId() {
         return id;
@@ -284,4 +292,85 @@ public class Order {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeInt(this.user_id);
+        dest.writeString(this.create_time);
+        dest.writeString(this.departure);
+        dest.writeString(this.destination);
+        dest.writeString(this.commodity_item_name);
+        dest.writeString(this.status);
+        dest.writeString(this.error_message);
+        dest.writeDouble(this.estimate_price);
+        dest.writeDouble(this.final_price);
+        dest.writeByte(this.is_paid ? (byte) 1 : (byte) 0);
+        dest.writeString(this.payment_method);
+        dest.writeString(this.price_unit);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+        dest.writeParcelable(this.sender, flags);
+        dest.writeByte(this.need_pickup ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.pickup_contact, flags);
+        dest.writeString(this.transport_company);
+        dest.writeString(this.transport_tracking);
+        dest.writeString(this.comment);
+        dest.writeInt(this.eship_service_id);
+        dest.writeString(this.eship_service_name);
+        dest.writeInt(this.station_id);
+        dest.writeString(this.carrier);
+        dest.writeByte(this.active ? (byte) 1 : (byte) 0);
+        dest.writeList(this.packages);
+    }
+
+    public Order() {
+    }
+
+    protected Order(Parcel in) {
+        this.id = in.readString();
+        this.user_id = in.readInt();
+        this.create_time = in.readString();
+        this.departure = in.readString();
+        this.destination = in.readString();
+        this.commodity_item_name = in.readString();
+        this.status = in.readString();
+        this.error_message = in.readString();
+        this.estimate_price = in.readDouble();
+        this.final_price = in.readDouble();
+        this.is_paid = in.readByte() != 0;
+        this.payment_method = in.readString();
+        this.price_unit = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        this.sender = in.readParcelable(Person.class.getClassLoader());
+        this.need_pickup = in.readByte() != 0;
+        this.pickup_contact = in.readParcelable(Person.class.getClassLoader());
+        this.transport_company = in.readString();
+        this.transport_tracking = in.readString();
+        this.comment = in.readString();
+        this.eship_service_id = in.readInt();
+        this.eship_service_name = in.readString();
+        this.station_id = in.readInt();
+        this.carrier = in.readString();
+        this.active = in.readByte() != 0;
+        this.packages = new ArrayList<Package>();
+        in.readList(this.packages, Package.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
+        @Override
+        public Order createFromParcel(Parcel source) {
+            return new Order(source);
+        }
+
+        @Override
+        public Order[] newArray(int size) {
+            return new Order[size];
+        }
+    };
 }

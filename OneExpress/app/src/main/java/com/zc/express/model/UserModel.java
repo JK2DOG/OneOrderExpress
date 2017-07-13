@@ -8,6 +8,7 @@ import com.zc.express.api.ExpressApi;
 import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.Location;
+import com.zc.express.bean.Order;
 import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
@@ -144,7 +145,15 @@ public class UserModel {
         return mExpressApi.getOrderDetails(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), oid).observeOn(AndroidSchedulers.mainThread());
     }
 
-
+    //订单详情
+    public Observable<Response<ResponseBody>> recheckOrder(Context context, Order entity) {
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.recheckOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), entity).observeOn(AndroidSchedulers.mainThread());
+    }
 
 
 
@@ -156,6 +165,14 @@ public class UserModel {
     public void saveUser(User user) {
         ObjectProvider.sharedInstance().set(user);
         ObjectPreference.saveObject(mContext, user);
+    }
+
+    public void savePushOrder(String oid){
+        ObjectPreference.saveObject(mContext, new Order(oid));
+    }
+    public  Order  getPushOrder(){
+        Order entity = ObjectProvider.sharedInstance().get(Order.class);
+        return entity;
     }
 
     private User getUser() {
@@ -178,12 +195,15 @@ public class UserModel {
         return null != getUser() && auth != null;
     }
 
+
+
     /**
      * 退出登录
      */
     public void logout() {
         ObjectProvider.sharedInstance().remove(User.class);
         ObjectPreference.clearObject(mContext, User.class);
+        ObjectPreference.clearObject(mContext, Order.class);
     }
 
     /**

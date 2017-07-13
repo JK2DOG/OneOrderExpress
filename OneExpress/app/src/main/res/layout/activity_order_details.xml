@@ -9,6 +9,11 @@
     <!--create_time, destination, departure, stauts, final_price, commodity_item_name, carrier, eship_service_name-->
     <include layout="@layout/toolbar"></include>
 
+    <com.zc.express.view.widget.EmptyLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <com.zc.express.view.widget.SpringScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -317,7 +322,7 @@
                     android:layout_centerInParent="true"
                     android:background="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:text="确认收货"
+                    android:text="抢单"
                     android:textColor="@color/black_90"
                     android:textSize="20sp" />
 

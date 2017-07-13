@@ -13,4 +13,5 @@ import dagger.Component;
 @Component(modules = ExpressModule.class)
 public interface OrderComponent {
     void inject(OrderDetailsActivity activity);
+    void inject(OrderConfirmActivity activity);
 }

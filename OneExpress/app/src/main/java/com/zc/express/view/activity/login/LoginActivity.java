@@ -233,9 +233,11 @@ public class LoginActivity extends BaseActivity {
             mPasswordEt.setError(getString(R.string.password_hint));
             return;
         }
+        showProgress();
         mSubscriptionCollection.add(mUserModel.login(new User(username, password)).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
+                dissmissProgress();
                 try {
                     String data = responseBody.string();
                     JSONObject jsonObject = new JSONObject(data);
@@ -266,6 +268,7 @@ public class LoginActivity extends BaseActivity {
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable e) {
+                dissmissProgress();
                 Log.e("zc", "Throwable:" + e.getMessage());
                 ToastUtils.showToast("登录失败！" + e.getMessage());
             }

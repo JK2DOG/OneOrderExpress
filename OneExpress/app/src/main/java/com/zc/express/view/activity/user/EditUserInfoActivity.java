@@ -89,7 +89,6 @@ public class EditUserInfoActivity extends BaseActivity{
             mNameEt.setError("请填写完整！");
             return;
         }
-
         final String phone = mPhoneEt.getText().toString().trim();
         if (phone.isEmpty()) {
             mPhoneEt.setError("请填写完整！");
@@ -100,12 +99,14 @@ public class EditUserInfoActivity extends BaseActivity{
             mCompanyEt.setError("请填写完整！");
             return;
         }
+        showProgress();
         mUser.setCompany(comppany);
         mUser.setReal_name(name);
         mUser.setPhone(phone);
         mSubscription=mUserModel.update(mUser).subscribe(new Action1<ResponseBody>() {
             @Override
             public void call(ResponseBody responseBody) {
+                dissmissProgress();
                 Log.e("zc", "ResponseBody" );
                 try {
                     String data = responseBody.string();
@@ -132,6 +133,7 @@ public class EditUserInfoActivity extends BaseActivity{
         },new Action1<Throwable>() {
             @Override
             public void call(Throwable e) {
+                dissmissProgress();
                 Log.e("zc", "Throwable:" + e.getMessage());
                 ToastUtils.showToast("修改失败！"+e.getMessage());
             }

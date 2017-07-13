@@ -1,5 +1,7 @@
 package com.zc.express.view.fragment;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +10,7 @@ import android.util.Log;
 import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
 import com.zc.express.bean.MainOrderList;
+import com.zc.express.bean.Order;
 import com.zc.express.bean.User;
 import com.zc.express.bean.WaitOrder;
 import com.zc.express.model.UserModel;
@@ -18,6 +21,9 @@ import com.zc.express.view.adapter.DailyListAdapter;
 import com.zc.express.view.adapter.WaitOrderAdapter;
 import com.zc.express.view.widget.AutoLoadOnScrollListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +52,7 @@ public class WaitFragment extends BaseFragment {
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
+
     private AutoLoadOnScrollListener mAutoLoadOnScrollListener;
 
     private LinearLayoutManager mLinearLayoutManager;
@@ -60,6 +67,13 @@ public class WaitFragment extends BaseFragment {
 
     private List<WaitOrder> mOrderLists = new ArrayList<>();
     private WaitOrderAdapter mAdapter;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     protected void initInjector() {
@@ -141,6 +155,17 @@ public class WaitFragment extends BaseFragment {
 
     }
 
+    //刷新病历
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onEvent(Order event) {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+    }
+
 
     private void initRecyclerView() {
         mAdapter = new WaitOrderAdapter(getActivity(), mOrderLists);
@@ -190,4 +215,9 @@ public class WaitFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }
