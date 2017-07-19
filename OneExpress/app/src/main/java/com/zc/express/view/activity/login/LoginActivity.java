@@ -157,28 +157,28 @@ public class LoginActivity extends BaseActivity {
               /* old是改变前的左上右下坐标点值，没有old的是改变后的左上右下坐标点值
               现在认为只要控件将Activity向上推的高度超过了1/3屏幕高，就认为软键盘弹起*/
                 if (oldBottom != 0 && bottom != 0 && (oldBottom - bottom > keyHeight)) {
-                    Log.e("wenzhihao", "up------>" + (oldBottom - bottom));
-                    int dist = mContentView.getBottom() - bottom;
-                    if (dist > 0) {
-                        ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", 0.0f, -dist);
-                        mAnimatorTranslateY.setDuration(300);
-                        mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
-                        mAnimatorTranslateY.start();
-                        zoomIn(mLogoIv, dist);
-                    }
-                    mServiceView.setVisibility(View.INVISIBLE);
+//                    Log.e("wenzhihao", "up------>" + (oldBottom - bottom));
+//                    int dist = mContentView.getBottom() - bottom;
+//                    if (dist > 0) {
+//                        ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", 0.0f, -dist);
+//                        mAnimatorTranslateY.setDuration(300);
+//                        mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
+//                        mAnimatorTranslateY.start();
+//                        zoomIn(mLogoIv, dist);
+//                    }
+//                    mServiceView.setVisibility(View.INVISIBLE);
 
                 } else if (oldBottom != 0 && bottom != 0 && (bottom - oldBottom > keyHeight)) {
-                    Log.e("wenzhihao", "down------>" + (bottom - oldBottom));
-                    if ((mContentView.getBottom() - oldBottom) > 0) {
-                        ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", mContentView.getTranslationY(), 0);
-                        mAnimatorTranslateY.setDuration(300);
-                        mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
-                        mAnimatorTranslateY.start();
-                        //键盘收回后，logo恢复原来大小，位置同样回到初始位置
-                        zoomOut(mLogoIv);
-                    }
-                    mServiceView.setVisibility(View.INVISIBLE);
+//                    Log.e("wenzhihao", "down------>" + (bottom - oldBottom));
+//                    if ((mContentView.getBottom() - oldBottom) > 0) {
+//                        ObjectAnimator mAnimatorTranslateY = ObjectAnimator.ofFloat(mContentView, "translationY", mContentView.getTranslationY(), 0);
+//                        mAnimatorTranslateY.setDuration(300);
+//                        mAnimatorTranslateY.setInterpolator(new LinearInterpolator());
+//                        mAnimatorTranslateY.start();
+//                        //键盘收回后，logo恢复原来大小，位置同样回到初始位置
+//                        zoomOut(mLogoIv);
+//                    }
+//                    mServiceView.setVisibility(View.INVISIBLE);
                 }
             }
         });

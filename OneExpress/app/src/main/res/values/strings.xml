@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">壹单快递</string>
-    <string name="hint_login_username">请输入手机号码</string>
+    <string name="hint_login_username">请输入用户名/邮箱</string>
     <string name="hint_login_password">输入密码</string>
     <string name="login">登录</string>
     <string name="register">注册</string>

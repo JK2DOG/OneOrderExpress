@@ -33,7 +33,7 @@ public class ExpressAplication extends Application {
 
     private void setStyleBasic() {
         BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(getApplicationContext());
-        builder.statusBarDrawable = R.mipmap.head_kuaidi;
+        builder.statusBarDrawable = R.mipmap.app_logo;
         builder.notificationFlags = Notification.FLAG_AUTO_CANCEL;  //设置为点击后自动消失
         builder.notificationDefaults = Notification.DEFAULT_SOUND;  //设置为铃声（ Notification.DEFAULT_SOUND）或者震动（ Notification.DEFAULT_VIBRATE）
         JPushInterface.setPushNotificationBuilder(1, builder);

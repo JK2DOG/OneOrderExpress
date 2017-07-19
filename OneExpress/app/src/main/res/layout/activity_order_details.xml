@@ -285,7 +285,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="20dp"
-                            android:text="eship_service_name"
+                            android:text="服务类型"
                             android:textColor="@color/gary_30"
                             android:textSize="18sp" />
 
