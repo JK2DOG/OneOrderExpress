@@ -1,6 +1,7 @@
 package com.zc.express.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
 
@@ -15,13 +16,19 @@ import com.zc.express.bean.User;
 import com.zc.express.data.memory.ObjectProvider;
 import com.zc.express.data.preference.ObjectPreference;
 
+import java.io.ByteArrayOutputStream;
+
 import javax.inject.Inject;
 
 import dagger.Module;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -155,6 +162,25 @@ public class UserModel {
         return mExpressApi.recheckOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), entity).observeOn(AndroidSchedulers.mainThread());
     }
 
+
+    /**
+     * 头像上传
+     * @param bitmap 头像bitmap
+     * @return 头像链接
+     */
+    public Observable<Response<ResponseBody>> updateAvatar(Context context,Bitmap bitmap){
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        // 转换成jpg上传文件服务器
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        return mExpressApi.uploadFile(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),MultipartBody.Part.createFormData("file", "avatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), data))).observeOn(AndroidSchedulers.mainThread());
+    }
 
 
     /**

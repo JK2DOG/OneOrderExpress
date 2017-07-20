@@ -28,6 +28,7 @@ public interface ExpressApi {
 
     @POST("user/check")
     Observable<ResponseBody> login(@Body User user);//登录
+
     @PUT("user")
     Observable<Response<ResponseBody>> register(@Body User user);//注册
 
@@ -59,6 +60,11 @@ public interface ExpressApi {
     @PUT("order/appRecheckOrder")
     Observable<Response<ResponseBody>> recheckOrder(@Header("Authorization") String auth, @Body Order order);
 
+    //抢单
+    @PUT("lbs/bid/{orderId}/{shipperId}")
+    Observable<Response<ResponseBody>> robOrder(@Header("Authorization") String auth, @Body String isRob, @Path("orderId") String oid, @Path("shipperId") String uid);
+
+
     /**
      * 文件内容，参数名file
      *
@@ -67,6 +73,6 @@ public interface ExpressApi {
      */
     @Multipart
     @POST("user/photo")
-    Observable<ResponseBody> uploadFile(@Part MultipartBody.Part filePart);
+    Observable<Response<ResponseBody>> uploadFile(@Header("Authorization") String auth, @Part MultipartBody.Part filePart);
 
 }

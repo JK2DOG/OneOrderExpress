@@ -11,4 +11,7 @@ public class Constant {
     public static String ACCOUNT_CANCEl = "cancel";//取消下单
     public static String HAVE_ORDER = "have_order";//有新单
     public static String CONFIRM_ORDER = "confirm_order";//确认订单
+    public static String HEAD_URL = "https://static.dev.easyeship.com/";
+
+    https://static.dev.easyeship.com/" + UserID + ".png”
 }
