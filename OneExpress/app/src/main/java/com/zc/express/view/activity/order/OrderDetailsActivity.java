@@ -168,7 +168,23 @@ public class OrderDetailsActivity extends BaseActivity {
     @OnClick(R.id.cv_confirm)
     void onClick() {
         if (mOrder != null) {
-            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+            mSubscriptionCollection.add(mUserModel.robOrder(OrderDetailsActivity.this,mOrder.getId()).subscribe(new Action1<Response<ResponseBody>>() {
+                @Override
+                public void call(Response<ResponseBody> response) {
+                    try {
+                        Log.e("retrofit", response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable e) {
+                    Log.e("zc", "Throwable:" + e.getMessage());
+                }
+            }));
+
+//            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
         }
     }
 

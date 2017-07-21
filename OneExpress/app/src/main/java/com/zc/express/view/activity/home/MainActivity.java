@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -19,6 +20,8 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.joanzapata.android.BaseAdapterHelper;
 import com.joanzapata.android.QuickAdapter;
 import com.nineoldandroids.view.ViewHelper;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.zc.express.R;
 import com.zc.express.bean.ItemBean;
@@ -33,10 +36,12 @@ import com.zc.express.view.activity.BaseActivity;
 import com.zc.express.view.activity.login.LoginActivity;
 import com.zc.express.view.activity.order.OrderDetailsActivity;
 import com.zc.express.view.activity.user.AboutActivity;
+import com.zc.express.view.activity.user.ServiceAgreementActivity;
 import com.zc.express.view.activity.user.UserInfoActivity;
 import com.zc.express.view.fragment.CompleteFragment;
 import com.zc.express.view.fragment.WaitFragment;
 import com.zc.express.view.widget.DragLayout;
+import com.zc.express.view.widget.PicassoCircleTransform;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -139,10 +144,8 @@ public class MainActivity extends BaseActivity {
                         if (null != mUser) {
                             mUserModel.saveUser(mUser);
                             mNameTv.setText("名字：" + mUser.getUser_name());
-
-//                            mPicasso.load(mUser.get)
-//                                    .noPlaceholder()
-//                                    .error(R.drawable.avatar_default).transform(new PicassoCircleTransform()).into(mAvatarImg);
+                            mPicasso.load(Constant.HEAD_URL + mUser.getId() + ".png").memoryPolicy(MemoryPolicy.NO_CACHE).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(mHeadIv);
+                            mPicasso.load(Constant.HEAD_URL + mUser.getId() + ".png").memoryPolicy(MemoryPolicy.NO_CACHE).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(ivIcon);
                         }
                     } else {//请求失败
                         String errorMsg = jsonObject.optString("message");
@@ -180,7 +183,7 @@ public class MainActivity extends BaseActivity {
     //接手pushIntent
     private void getPushIntent(Intent it) {
         Bundle mBundle = it.getExtras();
-        if (mBundle!=null){
+        if (mBundle != null) {
             if (mBundle.getBoolean(Constant.ACCOUNT_CONFLICT, false) && !isConflictDialogShow) {
                 showConflictDialog();
             }
@@ -224,6 +227,9 @@ public class MainActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         startActivity(new Intent(MainActivity.this, UserInfoActivity.class));
+                        break;
+                    case 1:
+                        startActivity(new Intent(MainActivity.this, ServiceAgreementActivity.class));
                         break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -387,6 +393,20 @@ public class MainActivity extends BaseActivity {
                 ViewHelper.setAlpha(ivIcon, 1 - percent);
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (dl.getStatus()== DragLayout.Status.OPEN) {
+                    dl.close();
+                } else {
+                    finish();
+                }
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

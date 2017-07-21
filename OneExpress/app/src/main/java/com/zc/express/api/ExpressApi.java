@@ -10,6 +10,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -61,8 +62,8 @@ public interface ExpressApi {
     Observable<Response<ResponseBody>> recheckOrder(@Header("Authorization") String auth, @Body Order order);
 
     //抢单
-    @PUT("lbs/bid/{orderId}/{shipperId}")
-    Observable<Response<ResponseBody>> robOrder(@Header("Authorization") String auth, @Body String isRob, @Path("orderId") String oid, @Path("shipperId") String uid);
+    @POST("lbs/bid/{orderId}/{shipperId}")
+    Observable<Response<ResponseBody>> robOrder(@Header("Authorization") String auth,@Header("Content-Type") String type, @Body String isRob, @Path("orderId") String oid, @Path("shipperId") String uid);
 
 
     /**

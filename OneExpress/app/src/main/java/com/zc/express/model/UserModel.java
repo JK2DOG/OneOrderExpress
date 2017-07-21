@@ -3,14 +3,12 @@ package com.zc.express.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Base64;
-import android.util.Log;
 
 import com.zc.express.api.ExpressApi;
 import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.Location;
 import com.zc.express.bean.Order;
-import com.zc.express.bean.QueryOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 import com.zc.express.data.memory.ObjectProvider;
@@ -28,7 +26,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 
 /**
  * Created by ZC on 2017/6/23.
@@ -60,6 +57,7 @@ public class UserModel {
         return mExpressApi.register(user).observeOn(AndroidSchedulers.mainThread());
 
     }
+
     /**
      * 更新用户信息
      * can only be used to update password phone, realname, and company
@@ -95,19 +93,15 @@ public class UserModel {
     }
 
     //设置坐标
-    public Observable<Response<ResponseBody>> setLocation(Context context, double lat,double lnt) {
+    public Observable<Response<ResponseBody>> setLocation(Context context, double lat, double lnt) {
 
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));
         }
         String authStrng = auth.getUsername() + ":" + auth.getPassword();
-        return mExpressApi.setLocation(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", new Location(lat,lnt)).observeOn(AndroidSchedulers.mainThread());
+        return mExpressApi.setLocation(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", new Location(lat, lnt)).observeOn(AndroidSchedulers.mainThread());
     }
-
-
-
-
 
 
 //
@@ -130,7 +124,7 @@ public class UserModel {
         return mExpressApi.getWaitOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
     }
 
-//已完成的订单
+    //已完成的订单
     public Observable<ResponseBody> getSuccessOrder(Context context) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
@@ -139,7 +133,6 @@ public class UserModel {
         String authStrng = auth.getUsername() + ":" + auth.getPassword();
         return mExpressApi.getSuccessOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), getUser().getId() + "", "1970-01-01", "2017-07-05").observeOn(AndroidSchedulers.mainThread());
     }
-
 
 
     //订单详情
@@ -165,10 +158,11 @@ public class UserModel {
 
     /**
      * 头像上传
+     *
      * @param bitmap 头像bitmap
      * @return 头像链接
      */
-    public Observable<Response<ResponseBody>> updateAvatar(Context context,Bitmap bitmap){
+    public Observable<Response<ResponseBody>> updateAvatar(Context context, Bitmap bitmap) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));
@@ -179,7 +173,19 @@ public class UserModel {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        return mExpressApi.uploadFile(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),MultipartBody.Part.createFormData("file", "avatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), data))).observeOn(AndroidSchedulers.mainThread());
+        return mExpressApi.uploadFile(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), MultipartBody.Part.createFormData("file", "avatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), data))).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * 抢单
+     */
+    public Observable<Response<ResponseBody>> robOrder(Context context, String oid) {
+        Auth auth = ObjectPreference.getObject(context, Auth.class);
+        if (null == auth) {
+            return Observable.error(new UserReadableException(""));
+        }
+        String authStrng = auth.getUsername() + ":" + auth.getPassword();
+        return mExpressApi.robOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),"text/plain","false", oid, getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
     }
 
 
@@ -193,10 +199,11 @@ public class UserModel {
         ObjectPreference.saveObject(mContext, user);
     }
 
-    public void savePushOrder(String oid){
+    public void savePushOrder(String oid) {
         ObjectPreference.saveObject(mContext, new Order(oid));
     }
-    public  Order  getPushOrder(){
+
+    public Order getPushOrder() {
         Order entity = ObjectProvider.sharedInstance().get(Order.class);
         return entity;
     }
@@ -222,7 +229,6 @@ public class UserModel {
     }
 
 
-
     /**
      * 退出登录
      */
@@ -238,8 +244,6 @@ public class UserModel {
     public void getVerificationCode(String phone) {
 
     }
-
-
 
 
 //    /**

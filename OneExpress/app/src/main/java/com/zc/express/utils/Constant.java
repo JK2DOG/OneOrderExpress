@@ -13,5 +13,5 @@ public class Constant {
     public static String CONFIRM_ORDER = "confirm_order";//确认订单
     public static String HEAD_URL = "https://static.dev.easyeship.com/";
 
-    https://static.dev.easyeship.com/" + UserID + ".png”
+//    https://static.dev.easyeship.com/" + UserID + ".png”
 }
