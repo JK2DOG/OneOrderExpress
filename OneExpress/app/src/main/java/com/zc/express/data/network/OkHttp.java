@@ -40,7 +40,7 @@ public class OkHttp {
                                     .newBuilder()
 //                                    .addHeader("Authorization", "YmxhbmcwMToxMjM0NTY=")
                                     .addHeader("Content-Type", "application/json")
-                                    .addHeader("Accept", "application/json")
+//                                    .addHeader("Accept", "application/json")
                                     .build();
                             return chain.proceed(request);
                         }

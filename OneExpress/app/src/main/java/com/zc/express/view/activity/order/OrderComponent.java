@@ -14,4 +14,5 @@ import dagger.Component;
 public interface OrderComponent {
     void inject(OrderDetailsActivity activity);
     void inject(OrderConfirmActivity activity);
+    void inject(EditPackageActivity activity);
 }

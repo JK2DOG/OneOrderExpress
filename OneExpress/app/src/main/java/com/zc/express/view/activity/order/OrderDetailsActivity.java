@@ -168,14 +168,32 @@ public class OrderDetailsActivity extends BaseActivity {
     @OnClick(R.id.cv_confirm)
     void onClick() {
         if (mOrder != null) {
-            mSubscriptionCollection.add(mUserModel.robOrder(OrderDetailsActivity.this,mOrder.getId()).subscribe(new Action1<Response<ResponseBody>>() {
+            mSubscriptionCollection.add(mUserModel.robOrder(OrderDetailsActivity.this, mOrder.getId()).subscribe(new Action1<Response<ResponseBody>>() {
                 @Override
                 public void call(Response<ResponseBody> response) {
-                    try {
-                        Log.e("retrofit", response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (response.isSuccessful()) {
+                        try {
+                            String reDataString = response.body().string();
+                            Log.e("retrofit", reDataString);
+                            if (reDataString.equals("accepted")){
+                                mUserModel.saveConfirmOrder(mOrder);
+                                ToastUtils.showToast("抢单成功！");
+                                OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+                            }
+                            if (reDataString.equals("denied")){//小二已放弃
+                                ToastUtils.showToast("denied！");
+                            }
+                            if (reDataString.equals("expired")){//单已过期
+                                ToastUtils.showToast("expired！");
+                            }
+                            if (reDataString.equals("declined")){//后台拒绝
+                                ToastUtils.showToast("declined！");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
             }, new Action1<Throwable>() {
                 @Override
@@ -184,7 +202,7 @@ public class OrderDetailsActivity extends BaseActivity {
                 }
             }));
 
-//            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
         }
     }
 

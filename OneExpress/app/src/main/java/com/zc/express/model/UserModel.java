@@ -185,7 +185,7 @@ public class UserModel {
             return Observable.error(new UserReadableException(""));
         }
         String authStrng = auth.getUsername() + ":" + auth.getPassword();
-        return mExpressApi.robOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),"text/plain","false", oid, getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
+        return mExpressApi.robOrder(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(),"text/plain","true", oid, getUser().getId() + "").observeOn(AndroidSchedulers.mainThread());
     }
 
 
@@ -197,6 +197,21 @@ public class UserModel {
     public void saveUser(User user) {
         ObjectProvider.sharedInstance().set(user);
         ObjectPreference.saveObject(mContext, user);
+    }
+
+    public void saveConfirmOrder(Order order) {
+        ObjectPreference.saveObject(mContext, order);
+        ObjectProvider.sharedInstance().set(order);
+    }
+
+    public Order getConfirmOrder() {
+        Order entity = ObjectProvider.sharedInstance().get(Order.class);
+        if (null == entity) {
+            entity = ObjectPreference.getObject(mContext, Order.class);
+            if (null != entity)
+                ObjectProvider.sharedInstance().set(entity);
+        }
+        return entity;
     }
 
     public void savePushOrder(String oid) {
@@ -236,6 +251,7 @@ public class UserModel {
         ObjectProvider.sharedInstance().remove(User.class);
         ObjectPreference.clearObject(mContext, User.class);
         ObjectPreference.clearObject(mContext, Order.class);
+        ObjectProvider.sharedInstance().remove(Order.class);
     }
 
     /**
