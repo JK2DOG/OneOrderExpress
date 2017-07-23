@@ -178,7 +178,8 @@ public class OrderDetailsActivity extends BaseActivity {
                             if (reDataString.equals("accepted")){
                                 mUserModel.saveConfirmOrder(mOrder);
                                 ToastUtils.showToast("抢单成功！");
-                                OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+                                Intent intent = new Intent(OrderDetailsActivity.this, OrderConfirmActivity.class);
+                                startActivity(intent);
                             }
                             if (reDataString.equals("denied")){//小二已放弃
                                 ToastUtils.showToast("denied！");

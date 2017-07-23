@@ -82,11 +82,16 @@ public class OrderConfirmActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        mOrder = getIntent().getParcelableExtra("entity");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mTitleTv.setText("包裹列表");
         initRecyclerView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mOrder = mUserModel.getConfirmOrder();
         initData();
     }
 
@@ -99,6 +104,9 @@ public class OrderConfirmActivity extends BaseActivity {
     }
 
     private void initData() {
+        if (mPackageLists != null && mPackageLists.size() > 0) {
+            mPackageLists.clear();
+        }
         mPackageLists.addAll(mOrder.getPackages());
         mAdapter.notifyDataSetChanged();
     }

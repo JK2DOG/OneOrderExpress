@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.zc.express.R;
 import com.zc.express.bean.Package;
+import com.zc.express.view.activity.order.EditPackageActivity;
 
 import java.util.List;
 
@@ -66,6 +67,12 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ItemCont
         holder.mHeightTv.setText(entity.getHeight()+"");
         holder.mWeightTv.setText(entity.getWeight()+"");
         holder.mValueTv.setText(entity.getValue()+"");
+        holder.mLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditPackageActivity.start(mContext,entity);
+            }
+        });
     }
 
 
