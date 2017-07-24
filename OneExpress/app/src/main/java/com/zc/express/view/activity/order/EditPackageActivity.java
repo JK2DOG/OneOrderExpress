@@ -67,7 +67,7 @@ public class EditPackageActivity extends BaseActivity {
 
     @Override
     protected void initInjector() {
-
+        DaggerOrderComponent.create().inject(this);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class EditPackageActivity extends BaseActivity {
         mWidthEt.append(mPackage.getWidth() + "");
         mWeightEt.append(mPackage.getWeight() + "");
         mValueEt.append(mPackage.getValue() + "");
-
+        mOrder = mUserModel.getConfirmOrder();
     }
 
 
@@ -102,14 +102,17 @@ public class EditPackageActivity extends BaseActivity {
         mPackage.setWeight(Integer.parseInt(weight));
         mPackage.setValue(Integer.parseInt(value));
         List<Package> packages = mOrder.getPackages();
-        if (packages!=null&&packages.size()>0){
-            for (int i=0;i<packages.size();i++){
-                if (packages.get(i).getId()==mPackage.getId()){
-                    packages.set(i,mPackage);
+        if (packages != null && packages.size() > 0) {
+            for (int i = 0; i < packages.size(); i++) {
+                if (packages.get(i).getId() == mPackage.getId()) {
+                    packages.set(i, mPackage);
                 }
             }
         }
-      mOrder.setPackages(packages);
+        mOrder.setPackages(packages);
+        mUserModel.saveConfirmOrder(mOrder);
+        EditPackageActivity.this.finish();
+        ToastUtils.showToast("包裹信息已改变，请点击更新包裹信息！");
 
     }
 

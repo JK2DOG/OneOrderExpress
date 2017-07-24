@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import com.zc.express.R;
 import com.zc.express.bean.ItemBean;
 import com.zc.express.bean.Order;
+import com.zc.express.bean.PushOrder;
 import com.zc.express.bean.User;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.Constant;
@@ -34,6 +35,7 @@ import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
 import com.zc.express.view.activity.BaseActivity;
 import com.zc.express.view.activity.login.LoginActivity;
+import com.zc.express.view.activity.order.OrderConfirmActivity;
 import com.zc.express.view.activity.order.OrderDetailsActivity;
 import com.zc.express.view.activity.user.AboutActivity;
 import com.zc.express.view.activity.user.ServiceAgreementActivity;
@@ -56,6 +58,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.MultiActionsNotificationBuilder;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
@@ -96,6 +99,9 @@ public class MainActivity extends BaseActivity {
     private String mHaveOid;
     private String mConfirmOid;
 
+    private Order mConfirmOrder;
+    private PushOrder mPushOrder;
+
     @Override
     protected int attachLayoutRes() {
         return R.layout.activity_main;
@@ -117,6 +123,19 @@ public class MainActivity extends BaseActivity {
         if (!mUserModel.isLogin()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+            return;
+        }
+        mConfirmOrder=mUserModel.getConfirmOrder();
+        if (mConfirmOrder!=null){
+            ToastUtils.showToast("您有一条未完成订单！");
+            Intent intent = new Intent(MainActivity.this, OrderConfirmActivity.class);
+            startActivity(intent);
+            return;
+        }
+        mPushOrder=mUserModel.getPushOrder();
+        if (mPushOrder!=null){
+            ToastUtils.showToast("您有一条指派订单：" + mConfirmOid);
+            showConfirmDialog(mConfirmOid);
             return;
         }
         // 检查登录状态
@@ -194,13 +213,13 @@ public class MainActivity extends BaseActivity {
             mHaveOid = mBundle.getString(Constant.HAVE_ORDER);
             if (!TextUtils.isEmpty(mHaveOid)) {//刷新待收取订单列表
                 ToastUtils.showToast("有新的订单来了：" + mHaveOid);
-                EventBus.getDefault().post(new Order(mHaveOid));
+                EventBus.getDefault().post(new PushOrder(mHaveOid));
             }
             mConfirmOid = mBundle.getString(Constant.CONFIRM_ORDER);
             if (!TextUtils.isEmpty(mConfirmOid)) {//指派订单
-                ToastUtils.showToast("紧急任务：" + mConfirmOid);
+                ToastUtils.showToast("您有一条指派订单：" + mConfirmOid);
                 mUserModel.savePushOrder(mConfirmOid);
-                showConfirmDialog();
+                showConfirmDialog(mConfirmOid);
             }
         }
     }
@@ -248,7 +267,7 @@ public class MainActivity extends BaseActivity {
     }
 
     //当有指派订单时弹框
-    private void showConfirmDialog() {
+    private void showConfirmDialog(final String pid) {
         String st = "紧急任务";
         if (!MainActivity.this.isFinishing()) {
             // clear up global variables
@@ -257,13 +276,13 @@ public class MainActivity extends BaseActivity {
                     confirmBuilder = new AlertDialog.Builder(MainActivity.this);
                 confirmBuilder.setTitle(st);
                 confirmBuilder.setMessage("您有一条指派订单任务，请查看");
-                confirmBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                confirmBuilder.setPositiveButton("确定接单", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         confirmBuilder = null;
-                        OrderDetailsActivity.start(MainActivity.this, mConfirmOid, true);
+                        OrderDetailsActivity.start(MainActivity.this, pid, true,true);
                     }
                 });
                 confirmBuilder.setCancelable(false);

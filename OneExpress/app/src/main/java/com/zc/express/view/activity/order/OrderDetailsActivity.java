@@ -3,6 +3,7 @@ package com.zc.express.view.activity.order;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
 import com.zc.express.bean.Order;
+import com.zc.express.bean.PushOrder;
+import com.zc.express.data.preference.ObjectPreference;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.JsonUtils;
 import com.zc.express.utils.RxSubscriptionCollection;
@@ -77,12 +80,14 @@ public class OrderDetailsActivity extends BaseActivity {
 
     private String oid;
     private boolean isConfirm;
+    private boolean isPush;
     private Order mOrder;
 
-    public static void start(Context context, String oid, boolean isConfirm) {
+    public static void start(Context context, String oid, boolean isConfirm, boolean isPush) {
         Intent intent = new Intent(context, OrderDetailsActivity.class);
         intent.putExtra("oid", oid);
         intent.putExtra("isConfirm", isConfirm);
+        intent.putExtra("isPush", isPush);
         context.startActivity(intent);
     }
 
@@ -101,6 +106,7 @@ public class OrderDetailsActivity extends BaseActivity {
     protected void initViews() {
         oid = getIntent().getStringExtra("oid");
         isConfirm = getIntent().getBooleanExtra("isConfirm", false);
+        isPush = getIntent().getBooleanExtra("isPush", false);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mConfirmCv.setVisibility(isConfirm ? View.VISIBLE : View.GONE);
@@ -173,6 +179,9 @@ public class OrderDetailsActivity extends BaseActivity {
                 public void call(Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         try {
+                            if (isPush){
+                                ObjectPreference.clearObject(OrderDetailsActivity.this, PushOrder.class);
+                            }
                             String reDataString = response.body().string();
                             Log.e("retrofit", reDataString);
                             if (reDataString.equals("accepted")){
@@ -203,7 +212,7 @@ public class OrderDetailsActivity extends BaseActivity {
                 }
             }));
 
-            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
+//            OrderConfirmActivity.start(OrderDetailsActivity.this, mOrder);
         }
     }
 

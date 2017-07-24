@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.zc.express.R;
 import com.zc.express.bean.MainOrderList;
 import com.zc.express.bean.Order;
+import com.zc.express.bean.PushOrder;
 import com.zc.express.bean.User;
 import com.zc.express.bean.WaitOrder;
 import com.zc.express.model.UserModel;
@@ -157,7 +158,7 @@ public class WaitFragment extends BaseFragment {
 
     //刷新病历
     @Subscribe(threadMode = ThreadMode.POSTING)
-    public void onEvent(Order event) {
+    public void onEvent(PushOrder event) {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

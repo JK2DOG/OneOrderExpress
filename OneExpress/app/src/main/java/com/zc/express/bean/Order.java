@@ -71,9 +71,6 @@ public class Order implements Parcelable {
     private boolean active;
     private List<Package> packages;
 
-    public Order(String oid) {
-        this.id = oid;
-    }
 
     public String getId() {
         return id;

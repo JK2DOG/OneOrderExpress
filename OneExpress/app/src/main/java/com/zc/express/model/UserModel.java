@@ -9,6 +9,7 @@ import com.zc.express.api.UserReadableException;
 import com.zc.express.bean.Auth;
 import com.zc.express.bean.Location;
 import com.zc.express.bean.Order;
+import com.zc.express.bean.PushOrder;
 import com.zc.express.bean.SetPushId;
 import com.zc.express.bean.User;
 import com.zc.express.data.memory.ObjectProvider;
@@ -215,11 +216,11 @@ public class UserModel {
     }
 
     public void savePushOrder(String oid) {
-        ObjectPreference.saveObject(mContext, new Order(oid));
+        ObjectPreference.saveObject(mContext, new PushOrder(oid));
     }
 
-    public Order getPushOrder() {
-        Order entity = ObjectProvider.sharedInstance().get(Order.class);
+    public PushOrder getPushOrder() {
+        PushOrder entity = ObjectProvider.sharedInstance().get(PushOrder.class);
         return entity;
     }
 
@@ -252,6 +253,8 @@ public class UserModel {
         ObjectPreference.clearObject(mContext, User.class);
         ObjectPreference.clearObject(mContext, Order.class);
         ObjectProvider.sharedInstance().remove(Order.class);
+        ObjectPreference.clearObject(mContext, PushOrder.class);
+
     }
 
     /**

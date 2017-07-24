@@ -14,6 +14,8 @@ import com.zc.express.R;
 import com.zc.express.bean.Order;
 import com.zc.express.bean.Package;
 import com.zc.express.bean.User;
+import com.zc.express.data.memory.ObjectProvider;
+import com.zc.express.data.preference.ObjectPreference;
 import com.zc.express.model.UserModel;
 import com.zc.express.utils.RxSubscriptionCollection;
 import com.zc.express.utils.ToastUtils;
@@ -113,25 +115,12 @@ public class OrderConfirmActivity extends BaseActivity {
 
     @OnClick(R.id.tv_confirm)
     void onClick() {
+        ToastUtils.showToast("请确认已修改包裹信息！");
         showProgress();
-        if (mPackageLists != null && mPackageLists.size() > 0) {
-            List<Package> mList = new ArrayList<>();
-            for (Package entity : mPackageLists) {
-                int value = entity.getValue();
-                entity.setValue(value + 1);
-                mList.add(entity);
-            }
-            mOrder.setPackages(mList);
-            mRxSubscriptionCollection.add(mUserModel.recheckOrder(OrderConfirmActivity.this, mOrder).subscribe(new Action1<Response<ResponseBody>>() {
+    Order entity=mUserModel.getConfirmOrder();
+            mRxSubscriptionCollection.add(mUserModel.recheckOrder(OrderConfirmActivity.this, entity).subscribe(new Action1<Response<ResponseBody>>() {
                 @Override
                 public void call(Response<ResponseBody> response) {
-                    Log.e("retrofit", response.headers().toString());
-                    try {
-                        Log.e("retrofit", response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
                     dissmissProgress();
                     if (response.isSuccessful()) {
                         String data = null;
@@ -141,6 +130,8 @@ public class OrderConfirmActivity extends BaseActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        ObjectPreference.clearObject(OrderConfirmActivity.this, Order.class);
+                        ObjectProvider.sharedInstance().remove(Order.class);
                         Context context = OrderConfirmActivity.this;
                         context.startActivity(new Intent(context, MainActivity.class));
                         finish();
@@ -155,7 +146,7 @@ public class OrderConfirmActivity extends BaseActivity {
                     Log.e("zc", "Throwable:" + e.getMessage());
                 }
             }));
-        }
+
 
 
     }

@@ -71,7 +71,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.Item
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OrderDetailsActivity.start(mContext,order.getOrder_id(),false);
+                OrderDetailsActivity.start(mContext,order.getOrder_id(),false,false);
             }
         });
 

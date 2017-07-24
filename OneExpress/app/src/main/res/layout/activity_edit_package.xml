@@ -250,7 +250,7 @@
                     android:layout_centerInParent="true"
                     android:background="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:text="更新包裹信息"
+                    android:text="修改包裹信息"
                     android:textColor="@color/black_90"
                     android:textSize="20sp" />
 

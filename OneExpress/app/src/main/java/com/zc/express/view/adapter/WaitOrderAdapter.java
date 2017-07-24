@@ -65,7 +65,7 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.Item
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OrderDetailsActivity.start(mContext,order.getOrderId(),true);
+                OrderDetailsActivity.start(mContext,order.getOrderId(),true,false);
             }
         });
     }
