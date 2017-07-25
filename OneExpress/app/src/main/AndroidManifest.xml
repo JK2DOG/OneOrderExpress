@@ -36,6 +36,9 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+
+    <uses-permission android:name="android.permission.READ_LOGS" />
+
     <application
         android:name=".ExpressAplication"
         android:allowBackup="true"

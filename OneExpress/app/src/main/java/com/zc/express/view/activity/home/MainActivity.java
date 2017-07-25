@@ -23,6 +23,7 @@ import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zc.express.R;
 import com.zc.express.bean.ItemBean;
 import com.zc.express.bean.Order;

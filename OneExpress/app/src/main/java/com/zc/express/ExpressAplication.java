@@ -3,6 +3,7 @@ package com.zc.express;
 import android.app.Application;
 import android.app.Notification;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zc.express.api.ExpressApiProvider;
 import com.zc.express.data.network.OkHttp;
 import com.zc.express.utils.ToastUtils;
@@ -20,6 +21,7 @@ public class ExpressAplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        CrashReport.initCrashReport(getApplicationContext(),"92b933de11", false);
         ExpressModule.init(this);
         OkHttp.createCache(getCacheDir());
         ExpressApiProvider.init(OkHttp.client(this));
