@@ -16,6 +16,7 @@ import com.zc.express.data.memory.ObjectProvider;
 import com.zc.express.data.preference.ObjectPreference;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -160,21 +161,19 @@ public class UserModel {
     /**
      * 头像上传
      *
-     * @param bitmap 头像bitmap
+     * @param path path
      * @return 头像链接
      */
-    public Observable<Response<ResponseBody>> updateAvatar(Context context, Bitmap bitmap) {
+    public Observable<Response<ResponseBody>> updateAvatar(Context context, String path) {
         Auth auth = ObjectPreference.getObject(context, Auth.class);
         if (null == auth) {
             return Observable.error(new UserReadableException(""));
         }
         String authStrng = auth.getUsername() + ":" + auth.getPassword();
         // 转换成jpg上传文件服务器
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+       File file=new File(path);
 
-        return mExpressApi.uploadFile(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), MultipartBody.Part.createFormData("file", "avatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), data))).observeOn(AndroidSchedulers.mainThread());
+        return mExpressApi.uploadFile(Base64.encodeToString(authStrng.getBytes(), Base64.DEFAULT).trim(), MultipartBody.Part.createFormData("file", "avatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), file))).observeOn(AndroidSchedulers.mainThread());
     }
 
     /**

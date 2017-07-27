@@ -2,17 +2,33 @@ package com.zc.express.view.activity.user;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
+import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.flyco.dialog.listener.OnOperItemClickL;
+import com.flyco.dialog.widget.ActionSheetDialog;
+import com.jph.takephoto.app.TakePhoto;
+import com.jph.takephoto.app.TakePhotoImpl;
+import com.jph.takephoto.compress.CompressConfig;
+import com.jph.takephoto.model.CropOptions;
+import com.jph.takephoto.model.InvokeParam;
+import com.jph.takephoto.model.TContextWrap;
+import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.model.TakePhotoOptions;
+import com.jph.takephoto.permission.InvokeListener;
+import com.jph.takephoto.permission.PermissionManager;
+import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.zc.express.R;
 import com.zc.express.bean.User;
@@ -24,21 +40,26 @@ import com.zc.express.view.activity.BaseActivity;
 import com.zc.express.view.widget.PicassoCircleTransform;
 import com.zc.express.view.widget.RoundAngleImageView;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import me.dreamheart.imagecrop.ImageCropActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import rx.functions.Action1;
+
+import static android.R.attr.path;
 
 /**
  * 用户信息
  * Created by ZC on 2017/6/26.
  */
 
-public class UserInfoActivity extends BaseActivity {
+public class UserInfoActivity extends BaseActivity implements TakePhoto.TakeResultListener, InvokeListener {
+
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -75,6 +96,9 @@ public class UserInfoActivity extends BaseActivity {
     @Inject
     Picasso mPicasso;
 
+    private TakePhoto takePhoto;
+    private InvokeParam invokeParam;
+
     @Override
     protected int attachLayoutRes() {
         return R.layout.activity_user;
@@ -87,6 +111,12 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getTakePhoto().onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void initViews() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -96,7 +126,7 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mPicasso.load(Constant.HEAD_URL + mUser.getId() + ".png") .memoryPolicy(MemoryPolicy.NO_CACHE).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(mHeadIv);
+        mPicasso.load(Constant.HEAD_URL + mUser.getId() + ".png").memoryPolicy(MemoryPolicy.NO_CACHE).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(mHeadIv);
         mNameTv.setText(mUser.getUser_name());
         mRealTime.setText(mUser.getReal_name());
         mEmailTv.setText(mUser.getEmail());
@@ -130,31 +160,37 @@ public class UserInfoActivity extends BaseActivity {
 
     @OnClick(R.id.iv_head)
     void head() {
-        ImageCropActivity.start(this, new ImageCropActivity.BmpReceiver() {
-            @Override
-            public void onBitmap(Bitmap bitmap) {
-                final String path = MediaStore.Images.Media.insertImage(UserInfoActivity.this.getContentResolver(), bitmap, "avatar", null);
-                mSubscriptionCollection.add(mUserModel.updateAvatar(UserInfoActivity.this, bitmap).subscribe(new Action1<Response<ResponseBody>>() {
-                    @Override
-                    public void call(Response<ResponseBody> response) {
-
-                        if (response.code() == 200) {
-                            mPicasso.load(path).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(mHeadIv);
-                            ToastUtils.showToast("设置成功！");
-                        } else {
-                            ToastUtils.showToast("设置失败！");
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        ToastUtils.showToast("设置失败！");
-                    }
-                }));
-            }
-        });
+        ActionSheetDialogNoTitle();
     }
 
+    /**
+     * 拍照和相册上传头像
+     */
+    private void ActionSheetDialogNoTitle() {
+        final String[] stringItems = {"相机", "相册"};
+        final ActionSheetDialog dialog = new ActionSheetDialog(this, stringItems, null);
+        dialog.isTitleShow(false).show();
+        dialog.setOnOperItemClickL(new OnOperItemClickL() {
+            @Override
+            public void onOperItemClick(AdapterView<?> parent, View view, int position, long id) {
+                File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
+                if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+                Uri imageUri = Uri.fromFile(file);
+                configCompress(getTakePhoto());
+                configTakePhotoOption(getTakePhoto());
+                switch (position) {
+                    case 0://拍照
+                        getTakePhoto().onPickFromCaptureWithCrop(imageUri,getCropOptions());
+                        break;
+                    case 1://相册
+                        getTakePhoto().onPickFromGalleryWithCrop(imageUri,getCropOptions());
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -180,4 +216,102 @@ public class UserInfoActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        getTakePhoto().onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getTakePhoto().onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.handlePermissionsResult(this, type, invokeParam, this);
+    }
+
+    /**
+     * 获取TakePhoto实例
+     *
+     * @return
+     */
+    public TakePhoto getTakePhoto() {
+        if (takePhoto == null) {
+            takePhoto = (TakePhoto) TakePhotoInvocationHandler.of(this).bind(new TakePhotoImpl(this, this));
+        }
+        return takePhoto;
+    }
+
+    @Override
+    public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
+        PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
+        if (PermissionManager.TPermissionType.WAIT.equals(type)) {
+            this.invokeParam = invokeParam;
+        }
+        return type;
+    }
+
+    @Override
+    public void takeSuccess(TResult result) {
+        final String path= result.getImage().getCompressPath();
+        Log.e("zc","takeSuccess：" + result.getImage().getCompressPath());
+        mSubscriptionCollection.add(mUserModel.updateAvatar(UserInfoActivity.this, path).subscribe(new Action1<Response<ResponseBody>>() {
+            @Override
+            public void call(Response<ResponseBody> response) {
+
+                if (response.code() == 200) {
+                    mPicasso.load(Constant.HEAD_URL + mUser.getId() + ".png").memoryPolicy(MemoryPolicy.NO_CACHE).error(R.mipmap.app_logo).transform(new PicassoCircleTransform()).into(mHeadIv);
+                    ToastUtils.showToast("设置成功！");
+                } else {
+                    ToastUtils.showToast("设置失败！");
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                ToastUtils.showToast("设置失败！");
+            }
+        }));
+    }
+
+    @Override
+    public void takeFail(TResult result, String msg) {
+        Log.e("zc", "takeFail:" + msg);
+    }
+
+    @Override
+    public void takeCancel() {
+        Log.e("zc", getResources().getString(com.jph.takephoto.R.string.msg_operation_canceled));
+    }
+
+    private void configCompress(TakePhoto takePhoto) {
+        CompressConfig config = new CompressConfig.Builder()
+                .setMaxSize(102400)
+                .setMaxPixel(800)
+                .enableReserveRaw(false)
+                .create();
+
+        takePhoto.onEnableCompress(config, false);
+
+    }
+
+    private void configTakePhotoOption(TakePhoto takePhoto) {
+        TakePhotoOptions.Builder builder = new TakePhotoOptions.Builder();
+        builder.setWithOwnGallery(true);//使用库选取图片
+        builder.setCorrectImage(true);//纠正旋转角度
+        takePhoto.setTakePhotoOptions(builder.create());
+
+    }
+
+    private CropOptions getCropOptions() {
+        CropOptions.Builder builder = new CropOptions.Builder();
+        builder.setAspectX(400).setAspectY(400);
+        builder.setWithOwnCrop(false);
+        return builder.create();
+    }
 }
